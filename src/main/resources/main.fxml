@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="847.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <ScrollPane content="$null" hbarPolicy="NEVER" layoutX="14.0" layoutY="102.0" prefHeight="456.0" prefWidth="185.0" style="" vbarPolicy="AS_NEEDED" />
+    <Label layoutX="43.0" layoutY="17.0" text="用户名：" />
+    <TextField layoutX="120.0" layoutY="14.0" prefWidth="200.0" />
+    <Label layoutX="340.0" layoutY="17.0" text="密码：" />
+    <PasswordField layoutX="385.0" layoutY="14.0" prefWidth="200.0" />
+    <Label layoutX="28.0" layoutY="56.0" text="数据库连接：" />
+    <TextField layoutX="120.0" layoutY="53.0" prefWidth="465.0" />
+  </children>
+</AnchorPane>
