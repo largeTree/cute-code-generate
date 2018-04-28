@@ -14,6 +14,7 @@ public class ApplicationEntry extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Parent main = FXMLLoader.load(getClass().getResource("/main.fxml"));
+			main.getStylesheets().add("/main.css");
 			primaryStage.setTitle("代码生成");
 			primaryStage.setScene(new Scene(main));
 			primaryStage.show();
