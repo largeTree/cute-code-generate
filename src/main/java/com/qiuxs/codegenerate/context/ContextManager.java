@@ -1,11 +1,13 @@
 package com.qiuxs.codegenerate.context;
 
+import com.qiuxs.codegenerate.utils.ComnUtils;
+
 public class ContextManager {
 
 	private static String userName;
 	private static String password;
 	private static String host;
-	private static int port;
+	private static String port;
 	private static String database;
 
 	public static String getUserName() {
@@ -32,11 +34,11 @@ public class ContextManager {
 		ContextManager.host = host;
 	}
 
-	public static int getPort() {
+	public static String getPort() {
 		return port;
 	}
 
-	public static void setPort(int port) {
+	public static void setPort(String port) {
 		ContextManager.port = port;
 	}
 
@@ -46,6 +48,14 @@ public class ContextManager {
 
 	public static void setDatabase(String database) {
 		ContextManager.database = database;
+	}
+
+	/**
+	 * 信息是否完整
+	 * @return
+	 */
+	public static boolean isComplete() {
+		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host) && ComnUtils.isNotBlank(password);
 	}
 
 }

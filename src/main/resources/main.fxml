@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
+<?import javafx.collections.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="847.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="847.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.qiuxs.codegenerate.controller.MainController">
   <children>
-    <ScrollPane content="$null" hbarPolicy="NEVER" layoutX="14.0" layoutY="102.0" prefHeight="456.0" prefWidth="185.0" style="" vbarPolicy="AS_NEEDED" />
-    <Label layoutX="43.0" layoutY="17.0" text="用户名：" />
-    <TextField layoutX="120.0" layoutY="14.0" prefWidth="200.0" />
-    <Label layoutX="340.0" layoutY="17.0" text="密码：" />
-    <PasswordField layoutX="385.0" layoutY="14.0" prefWidth="200.0" />
-    <Label layoutX="28.0" layoutY="56.0" text="数据库连接：" />
-    <TextField layoutX="120.0" layoutY="53.0" prefWidth="465.0" />
+    <Label layoutX="72.0" layoutY="17.0" text="User：" />
+    <TextField fx:id="userInput" layoutX="120.0" layoutY="14.0" prefWidth="200.0" text="root" />
+    <Label layoutX="482.0" layoutY="17.0" text="Password：" />
+    <PasswordField fx:id="passInput" layoutX="566.0" layoutY="14.0" prefWidth="200.0" text="123456" />
+    <Label layoutX="71.0" layoutY="56.0" text="Host：" />
+    <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="127.0.0.1" />
+    <Label layoutX="520.0" layoutY="56.0" text="Port：" />
+    <TextField fx:id="portInput" layoutX="566.0" layoutY="53.0" prefWidth="200.0" text="3306" />
+    <Button id="conn_id" fx:id="connBtn" layoutX="566.0" layoutY="93.0" mnemonicParsing="false" onMouseClicked="#ConnBtnClick" text="Connection" />
+    <ComboBox fx:id="schemaCmb" layoutX="120.0" layoutY="96.0" prefWidth="200.0">
+      <items>
+        <FXCollections fx:factory="observableArrayList" />
+      </items>
+    </ComboBox>
+    <Label layoutX="48.0" layoutY="96.0" text="Schame：" />
   </children>
+  <stylesheets>
+    <URL value="@main.css" />
+  </stylesheets>
 </AnchorPane>
