@@ -2,6 +2,9 @@ package com.qiuxs.codegenerate;
 
 import java.io.IOException;
 
+import com.qiuxs.codegenerate.context.ContextManager;
+import com.qiuxs.codegenerate.context.DatabaseContext;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +16,7 @@ public class ApplicationEntry extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			ContextManager.setPrimaryStage(primaryStage);
 			Parent main = FXMLLoader.load(getClass().getResource("/main.fxml"));
 			main.getStylesheets().add("/main.css");
 			primaryStage.setTitle("代码生成");
@@ -27,5 +31,10 @@ public class ApplicationEntry extends Application {
 		launch(args);
 	}
 
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		DatabaseContext.close();
+	}
 
 }

@@ -2,13 +2,25 @@ package com.qiuxs.codegenerate.context;
 
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
+import javafx.stage.Stage;
+
 public class ContextManager {
+
+	private static Stage primaryStage;
 
 	private static String userName;
 	private static String password;
 	private static String host;
 	private static String port;
 	private static String database;
+
+	public static Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
+	public static void setPrimaryStage(Stage primaryStage) {
+		ContextManager.primaryStage = primaryStage;
+	}
 
 	public static String getUserName() {
 		return userName;
