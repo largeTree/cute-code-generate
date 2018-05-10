@@ -18,7 +18,7 @@
     <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="127.0.0.1" />
     <Label layoutX="520.0" layoutY="56.0" text="Port：" />
     <TextField fx:id="portInput" layoutX="566.0" layoutY="53.0" prefWidth="200.0" text="3306" />
-    <Button fx:id="connBtn" layoutX="393.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
+    <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
     <Button fx:id="buildBtn" layoutX="567.0" layoutY="94.0" mnemonicParsing="false" onMouseClicked="#buildBtnClick" text="Begin Build" />
     <ComboBox fx:id="schemaCmb" layoutX="120.0" layoutY="96.0" prefWidth="200.0">
       <items>
