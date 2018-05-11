@@ -1,5 +1,7 @@
 package com.qiuxs.codegenerate.model;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -124,6 +126,14 @@ public class TableModel {
 
 	public void setFields(List<FieldModel> fields) {
 		this.fields = fields;
+		this.fields.forEach(field -> {
+			if (Date.class.getSimpleName().equals(field.getJavaType())) {
+				this.importClasses.add(Date.class.getName() + ";");
+			}
+			if (BigDecimal.class.getSimpleName().equals(field.getJavaType())) {
+				this.importClasses.add(BigDecimal.class.getName() + ";");
+			}
+		});
 	}
 
 	public Set<String> getImportClasses() {

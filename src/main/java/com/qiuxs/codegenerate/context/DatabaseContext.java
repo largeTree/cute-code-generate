@@ -76,6 +76,9 @@ public class DatabaseContext {
 				conn = newConnection(schema);
 				tconn = conn.get();
 			}
+			if (schema == null) {
+				schema = currentSchema;
+			}
 			// 目标数据库不为空时 切换一下数据库
 			if (ComnUtils.isNotBlank(schema)) {
 				Optional<Statement> statement = Optional.ofNullable(tconn.createStatement());
@@ -100,7 +103,7 @@ public class DatabaseContext {
 		}
 	}
 
-	public static void close() {
+	public static void destory() {
 		conn.ifPresent(c -> {
 			try {
 				c.close();
@@ -118,6 +121,10 @@ public class DatabaseContext {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	public static String getCurrentSchame() {
+		return currentSchema;
 	}
 
 }

@@ -21,6 +21,10 @@ public class ApplicationEntry extends Application {
 			main.getStylesheets().add("/main.css");
 			primaryStage.setTitle("代码生成");
 			primaryStage.setScene(new Scene(main));
+			primaryStage.setOnCloseRequest(event -> {
+				DatabaseContext.destory();
+				ContextManager.destory();
+			});
 			primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -29,12 +33,6 @@ public class ApplicationEntry extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
-	}
-
-	@Override
-	public void stop() throws Exception {
-		super.stop();
-		DatabaseContext.close();
 	}
 
 }

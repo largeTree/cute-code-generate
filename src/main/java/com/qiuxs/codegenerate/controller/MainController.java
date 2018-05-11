@@ -12,6 +12,7 @@ import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
+import com.qiuxs.codegenerate.utils.ComnUtils;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -86,6 +87,12 @@ public class MainController implements Initializable {
 			this.refreshTableModel();
 			TableModel tableModel = CodeTemplateContext.getOrCreateTableModel(newVal);
 			this.currentTableModel = tableModel;
+			if (ComnUtils.isBlank(this.currentTableModel.getClassName())) {
+				this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(newVal)));
+			}
+			if (ComnUtils.isBlank(this.currentTableModel.getPackageName())) {
+				this.currentTableModel.setPackageName("com." + this.author.getText() + ".");
+			}
 			this.refreshControl();
 			// 启用构建开关
 			this.buildFlag.setDisable(false);
@@ -111,10 +118,33 @@ public class MainController implements Initializable {
 
 		// 默认所有控件禁用，选择表并勾选build后启用
 		this.setDisableFlag(true);
+
+		// 默认输出路径
+		this.outPutPathInput.setText(System.getProperty("user.home") + "\\Desktop");
+		ContextManager.setOutPutPath(this.outPutPathInput.getText());
+		// 默认作者
+		this.author.setText(System.getProperty("user.name"));
+
+		// 初始化数据库信息
+		initDatabaseInfo();
 	}
 
 	@FXML
 	public void connBtnClick(MouseEvent event) {
+		initDatabaseInfo();
+		if (ContextManager.isComplete()) {
+			List<String> allSchemas = DatabaseContext.getAllSchemas();
+			schemaCmb.getItems().clear();
+			schemaCmb.getItems().addAll(allSchemas);
+			if (allSchemas.size() > 0) {
+				schemaCmb.getSelectionModel().select(0);
+			}
+		} else {
+			ContextManager.showAlert("数据库信息不完整！！！");
+		}
+	}
+
+	private void initDatabaseInfo() {
 		String userName = this.userInput.getText();
 		String password = this.passInput.getText();
 		String host = this.hostInput.getText();
@@ -123,27 +153,24 @@ public class MainController implements Initializable {
 		ContextManager.setPassword(password);
 		ContextManager.setHost(host);
 		ContextManager.setPort(port);
-		if (ContextManager.isComplete()) {
-			List<String> allSchemas = DatabaseContext.getAllSchemas();
-			schemaCmb.getItems().clear();
-			schemaCmb.getItems().addAll(allSchemas);
-			if (allSchemas.size() > 0) {
-				schemaCmb.getSelectionModel().select(0);
-			}
-		}
 	}
 
 	@FXML
 	public void buildBtnClick(MouseEvent event) {
-		// 显示进度条
-		CountDownLatch latch = new CountDownLatch(1);
-		new TableBuilderThread(latch).start();
 		try {
+			if (ContextManager.isComplete() && ComnUtils.isBlank(DatabaseContext.getCurrentSchame())) {
+				return;
+			}
+			this.refreshTableModel();
+			ContextManager.showLoading();
+			CountDownLatch latch = new CountDownLatch(1);
+			new TableBuilderThread(latch).start();
 			latch.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		} finally {
+			ContextManager.hideLoading();
 		}
-		// 关闭进度条
 	}
 
 	@FXML
@@ -152,10 +179,15 @@ public class MainController implements Initializable {
 		File outPutDir = dirChooser.showDialog(ContextManager.getPrimaryStage());
 		if (outPutDir != null) {
 			this.outPutPathInput.setText(outPutDir.getAbsolutePath());
+			ContextManager.setOutPutPath(this.outPutPathInput.getText());
 		}
 	}
 
 	private void refreshControl() {
+		String authorName = this.currentTableModel.getAuthor();
+		if (authorName != null) {
+			this.author.setText(authorName);
+		}
 		this.buildFlag.setSelected(this.currentTableModel.isBuildFlag());
 		this.setDisableFlag(!this.currentTableModel.isBuildFlag());
 		this.packageName.setText(this.currentTableModel.getPackageName());
@@ -172,6 +204,7 @@ public class MainController implements Initializable {
 		if (this.currentTableModel == null) {
 			return;
 		}
+		this.currentTableModel.setAuthor(this.author.getText());
 		this.currentTableModel.setBuildFlag(this.buildFlag.isSelected());
 		this.currentTableModel.setPackageName(this.packageName.getText());
 		this.currentTableModel.setSuperClass(this.superClass.getText());
