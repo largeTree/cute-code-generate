@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="847.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.qiuxs.codegenerate.controller.MainController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="589.0" prefWidth="847.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.qiuxs.codegenerate.controller.MainController">
   <children>
     <Label layoutX="72.0" layoutY="17.0" text="User：" />
     <TextField fx:id="userInput" layoutX="120.0" layoutY="14.0" prefWidth="200.0" text="root" />
@@ -30,34 +30,34 @@
       <content>
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="389.0000915527344" prefWidth="200.0">
           <children>
-            <ListView fx:id="tableList" layoutX="0.0" layoutY="0.0" prefHeight="391.0" prefWidth="200.0" />
+            <ListView fx:id="tableList" layoutX="0.0" layoutY="0.0" prefHeight="383.0" prefWidth="200.0" />
           </children>
         </AnchorPane>
       </content>
     </TitledPane>
-    <TitledPane animated="false" collapsible="false" expanded="true" layoutX="278.0" layoutY="141.0" prefHeight="415.0" prefWidth="488.0" text="属性设置">
+    <TitledPane animated="false" collapsible="false" expanded="true" layoutX="278.0" layoutY="141.0" prefHeight="415.0" prefWidth="555.0" text="属性设置">
       <content>
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <children>
-            <Label layoutX="10.0" layoutY="13.0" text="OutPutPath：" />
-            <Separator layoutX="0.0" layoutY="69.0" prefWidth="488.0" />
-            <TextField fx:id="outPutPathInput" editable="false" layoutX="89.0" layoutY="9.0" prefWidth="200.0" />
-            <Button fx:id="outPutPathChooserBtn" layoutX="293.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#outPutPathBtnClick" text="选择" />
-            <Label layoutX="14.0" layoutY="114.0" text="SuperClass：" />
-            <TextField fx:id="superClass" layoutX="90.0" layoutY="111.0" prefWidth="380.0" text="" />
-            <Label layoutX="14.0" layoutY="144.0" text="ClassName：" />
-            <TextField fx:id="className" layoutX="90.0" layoutY="140.0" prefWidth="380.0" />
-            <Label layoutX="29.0" layoutY="82.0" text="Package：" />
-            <TextField fx:id="packageName" layoutX="90.0" layoutY="82.0" prefWidth="380.0" />
-            <CheckBox fx:id="entityCkBox" layoutX="154.0" layoutY="205.0" mnemonicParsing="false" selected="false" text="Entity" />
-            <CheckBox fx:id="daoCkBox" layoutX="216.0" layoutY="205.0" mnemonicParsing="false" selected="false" text="Dao" />
-            <CheckBox fx:id="serviceCkBox" layoutX="270.0" layoutY="205.0" mnemonicParsing="false" selected="false" text="Service" />
-            <CheckBox fx:id="controllerCkBox" layoutX="337.0" layoutY="205.0" mnemonicParsing="false" selected="false" text="Cntroller" />
-            <Label layoutX="37.0" layoutY="42.0" text="Author：" />
-            <TextField id="outPutPathInput" fx:id="author" layoutX="89.0" layoutY="39.0" prefWidth="200.0" />
-            <Label layoutX="49.0" layoutY="173.0" text="Desc：" />
-            <TextField id="className" fx:id="desc" layoutX="90.0" layoutY="170.0" prefWidth="380.0" />
-            <CheckBox id="entityCkBox" fx:id="buildFlag" layoutX="89.0" layoutY="205.0" mnemonicParsing="false" selected="false" text="Build" />
+            <Label layoutX="10.0" layoutY="12.0" text="OutPutPath：" />
+            <Separator layoutX="2.0" layoutY="88.0" prefWidth="550.0" />
+            <TextField fx:id="outPutPathInput" editable="false" layoutX="118.0" layoutY="9.0" prefWidth="200.0" />
+            <Button fx:id="outPutPathChooserBtn" layoutX="335.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#outPutPathBtnClick" text="选择" />
+            <Label layoutX="16.0" layoutY="140.0" text="SuperClass：" />
+            <TextField fx:id="superClass" layoutX="120.0" layoutY="137.0" prefWidth="380.0" text="" />
+            <Label layoutX="16.0" layoutY="179.0" text="ClassName：" />
+            <TextField fx:id="className" layoutX="120.0" layoutY="175.0" prefWidth="380.0" />
+            <Label layoutX="34.0" layoutY="101.0" text="Package：" />
+            <TextField fx:id="packageName" layoutX="121.0" layoutY="101.0" prefWidth="380.0" />
+            <CheckBox fx:id="entityCkBox" layoutX="121.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Entity" />
+            <CheckBox fx:id="daoCkBox" layoutX="208.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Dao" />
+            <CheckBox fx:id="serviceCkBox" layoutX="379.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Service" />
+            <CheckBox fx:id="controllerCkBox" layoutX="121.0" layoutY="303.0" mnemonicParsing="false" selected="false" text="Cntroller" />
+            <Label layoutX="43.0" layoutY="51.0" text="Author：" />
+            <TextField id="outPutPathInput" fx:id="author" layoutX="119.0" layoutY="48.0" prefWidth="200.0" />
+            <Label layoutX="61.0" layoutY="218.0" text="Desc：" />
+            <TextField id="className" fx:id="desc" layoutX="120.0" layoutY="215.0" prefWidth="380.0" />
+            <CheckBox id="entityCkBox" fx:id="mapperCkBox" layoutX="286.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Mapper" />
           </children>
         </AnchorPane>
       </content>

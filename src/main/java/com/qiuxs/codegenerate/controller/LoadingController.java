@@ -27,6 +27,7 @@ public class LoadingController implements Initializable {
 	}
 
 	public void cancelBtnClick(MouseEvent event) {
+		ContextManager.cancelBuild();
 		ContextManager.hideLoading();
 	}
 

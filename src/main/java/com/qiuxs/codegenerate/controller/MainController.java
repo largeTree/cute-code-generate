@@ -5,25 +5,27 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.CountDownLatch;
 
-import com.qiuxs.codegenerate.TableBuilderThread;
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
 public class MainController implements Initializable {
@@ -43,7 +45,7 @@ public class MainController implements Initializable {
 	@FXML
 	private ComboBox<String> schemaCmb;
 	@FXML
-	private ListView<String> tableList;
+	private ListView<Pane> tableList;
 	@FXML
 	private TextField outPutPathInput;
 	@FXML
@@ -59,11 +61,11 @@ public class MainController implements Initializable {
 	@FXML
 	private TextField desc;
 	@FXML
-	private CheckBox buildFlag;
-	@FXML
 	private CheckBox entityCkBox;
 	@FXML
 	private CheckBox daoCkBox;
+	@FXML
+	private CheckBox mapperCkBox;
 	@FXML
 	private CheckBox serviceCkBox;
 	@FXML
@@ -79,33 +81,34 @@ public class MainController implements Initializable {
 		this.schemaCmb.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
 			this.tableList.getItems().clear();
 			List<String> tables = DatabaseContext.getAllTablesBySchema(newVal);
-			this.tableList.getItems().addAll(tables);
+			for (String tableName : tables) {
+				this.tableList.getItems().add(getTablePane(tableName));
+			}
 		});
 
 		// 选择表
 		this.tableList.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-			this.refreshTableModel();
-			TableModel tableModel = CodeTemplateContext.getOrCreateTableModel(newVal);
+			// 将控件的值刷新到模型中
+			MainController.this.refreshTableModel();
+			// 获取表名
+			String tableName = newVal.getUserData().toString();
+			// 获取表模型
+			TableModel tableModel = CodeTemplateContext.getOrCreateTableModel(tableName);
+			// 设置为当前表模型
 			this.currentTableModel = tableModel;
+			// 设置当前表是否需要构建
+			this.currentTableModel.setBuildFlag(((CheckBox) newVal.getChildren().get(0)).isSelected());
+			// 还未设置过类名的情况下，自动生成一个类名
 			if (ComnUtils.isBlank(this.currentTableModel.getClassName())) {
-				this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(newVal)));
+				this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(tableName)));
 			}
+			// 还未设置过包名的情况下 自动生成一个包名
 			if (ComnUtils.isBlank(this.currentTableModel.getPackageName())) {
 				this.currentTableModel.setPackageName("com." + this.author.getText() + ".");
 			}
+			// 刷新控件
 			this.refreshControl();
-			// 启用构建开关
-			this.buildFlag.setDisable(false);
 		});
-
-		// 构建状态变化
-		this.buildFlag.selectedProperty().addListener((observable, oldVal, newVal) -> {
-			this.setDisableFlag(oldVal);
-			this.currentTableModel.setBuildFlag(newVal);
-		});
-
-		// 默认构建选项不可用，选择表后启用
-		this.buildFlag.setDisable(true);
 
 		this.tableControls.add(this.packageName);
 		this.tableControls.add(this.superClass);
@@ -113,6 +116,7 @@ public class MainController implements Initializable {
 		this.tableControls.add(this.desc);
 		this.tableControls.add(this.entityCkBox);
 		this.tableControls.add(this.daoCkBox);
+		this.tableControls.add(this.mapperCkBox);
 		this.tableControls.add(this.serviceCkBox);
 		this.tableControls.add(this.controllerCkBox);
 
@@ -127,6 +131,24 @@ public class MainController implements Initializable {
 
 		// 初始化数据库信息
 		initDatabaseInfo();
+	}
+
+	private Pane getTablePane(String tableName) {
+		// 选择框
+		CheckBox tbCk = new CheckBox();
+		tbCk.setText("");
+		tbCk.setUserData(tableName);
+		tbCk.selectedProperty().addListener(new tableBoxChangedListener());
+		// 表名显示文字
+		Label tableNameLabel = new Label(tableName);
+		tableNameLabel.setLayoutX(tbCk.getFont().getSize() * 2);
+
+		// 容器
+		Pane pane = new Pane();
+		pane.getChildren().add(tbCk);
+		pane.getChildren().add(tableNameLabel);
+		pane.setUserData(tableName);
+		return pane;
 	}
 
 	@FXML
@@ -157,20 +179,11 @@ public class MainController implements Initializable {
 
 	@FXML
 	public void buildBtnClick(MouseEvent event) {
-		try {
-			if (ContextManager.isComplete() && ComnUtils.isBlank(DatabaseContext.getCurrentSchame())) {
-				return;
-			}
-			this.refreshTableModel();
-			ContextManager.showLoading();
-			CountDownLatch latch = new CountDownLatch(1);
-			new TableBuilderThread(latch).start();
-			latch.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			ContextManager.hideLoading();
+		if (ContextManager.isComplete() && ComnUtils.isBlank(DatabaseContext.getCurrentSchame())) {
+			return;
 		}
+		this.refreshTableModel();
+		ContextManager.startBuilder();
 	}
 
 	@FXML
@@ -188,7 +201,6 @@ public class MainController implements Initializable {
 		if (authorName != null) {
 			this.author.setText(authorName);
 		}
-		this.buildFlag.setSelected(this.currentTableModel.isBuildFlag());
 		this.setDisableFlag(!this.currentTableModel.isBuildFlag());
 		this.packageName.setText(this.currentTableModel.getPackageName());
 		this.superClass.setText(this.currentTableModel.getSuperClass());
@@ -196,6 +208,7 @@ public class MainController implements Initializable {
 		this.desc.setText(this.currentTableModel.getDesc());
 		this.entityCkBox.setSelected(this.currentTableModel.isEntity());
 		this.daoCkBox.setSelected(this.currentTableModel.isDao());
+		this.mapperCkBox.setSelected(this.currentTableModel.isMapper());
 		this.serviceCkBox.setSelected(this.currentTableModel.isService());
 		this.controllerCkBox.setSelected(this.currentTableModel.isController());
 	}
@@ -205,13 +218,13 @@ public class MainController implements Initializable {
 			return;
 		}
 		this.currentTableModel.setAuthor(this.author.getText());
-		this.currentTableModel.setBuildFlag(this.buildFlag.isSelected());
 		this.currentTableModel.setPackageName(this.packageName.getText());
 		this.currentTableModel.setSuperClass(this.superClass.getText());
 		this.currentTableModel.setClassName(this.className.getText());
 		this.currentTableModel.setDesc(this.desc.getText());
 		this.currentTableModel.setEntity(this.entityCkBox.isSelected());
 		this.currentTableModel.setDao(this.daoCkBox.isSelected());
+		this.currentTableModel.setMapper(this.mapperCkBox.isSelected());
 		this.currentTableModel.setService(this.serviceCkBox.isSelected());
 		this.currentTableModel.setController(this.controllerCkBox.isSelected());
 	}
@@ -222,4 +235,13 @@ public class MainController implements Initializable {
 		});
 	}
 
+	class tableBoxChangedListener implements ChangeListener<Boolean> {
+
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			MainController.this.setDisableFlag(oldValue);
+			MainController.this.currentTableModel.setBuildFlag(newValue);
+		}
+
+	}
 }

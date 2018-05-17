@@ -2,8 +2,12 @@ package com.qiuxs.codegenerate.context;
 
 import java.io.IOException;
 
+import com.qiuxs.codegenerate.TableBuilderService;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,6 +17,20 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class ContextManager {
+
+	private static Service<Boolean> builderService = new TableBuilderService();
+	static {
+		EventHandler<WorkerStateEvent> onBuilderFinishHandler = new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ContextManager.hideLoading();
+			}
+		};
+		builderService.setOnCancelled(onBuilderFinishHandler);
+		builderService.setOnFailed(onBuilderFinishHandler);
+		builderService.setOnReady(onBuilderFinishHandler);
+		builderService.setOnSucceeded(onBuilderFinishHandler);
+	}
 
 	private static Stage primaryStage;
 	private static Stage loadingStage;
@@ -135,8 +153,7 @@ public class ContextManager {
 	 * @return
 	 */
 	public static boolean isComplete() {
-		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host)
-				&& ComnUtils.isNotBlank(port);
+		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host) && ComnUtils.isNotBlank(port);
 	}
 
 	public static void setOutPutPath(String outPutPath) {
@@ -147,4 +164,12 @@ public class ContextManager {
 		return outPutPath;
 	}
 
+	public static void startBuilder() {
+		showLoading();
+		builderService.start();
+	}
+
+	public static void cancelBuild() {
+		builderService.cancel();
+	}
 }

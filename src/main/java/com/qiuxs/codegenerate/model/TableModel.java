@@ -18,6 +18,7 @@ public class TableModel {
 	private String desc;
 	private boolean entity = true;
 	private boolean dao = true;
+	private boolean mapper = true;
 	private boolean service = true;
 	private boolean controller = true;
 
@@ -103,6 +104,14 @@ public class TableModel {
 
 	public void setDao(boolean dao) {
 		this.dao = dao;
+	}
+
+	public boolean isMapper() {
+		return mapper;
+	}
+
+	public void setMapper(boolean mapper) {
+		this.mapper = mapper;
 	}
 
 	public boolean isService() {

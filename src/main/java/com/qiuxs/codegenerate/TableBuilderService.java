@@ -10,84 +10,94 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.FieldModel;
 import com.qiuxs.codegenerate.model.TableModel;
+import com.qiuxs.codegenerate.utils.ComnUtils;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
-public class TableBuilderThread extends Thread {
+public class TableBuilderService extends Service<Boolean> {
 
 	private static final String COLUMNS_SQL = "SELECT COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,COLUMN_KEY FROM information_schema.`COLUMNS` WHERE TABLE_NAME = ? AND TABLE_SCHEMA = DATABASE()";
 
-	private CountDownLatch latch;
 	private Connection conn;
 
 	private Configuration conf;
 
-	public TableBuilderThread(CountDownLatch latch) {
-		this.latch = latch;
-		this.conn = DatabaseContext.getConnection(null);
+	public TableBuilderService() {
 		this.conf = new Configuration(Configuration.VERSION_2_3_25);
 		try {
-			this.conf.setTemplateLoader(
-					new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
+			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void run() {
-		List<TableModel> tableModels = CodeTemplateContext.getAllBuildTableModels();
-		tableModels.forEach(tm -> {
-			List<FieldModel> fieldsByTableName = this.getFieldsByTableName(tm);
-			tm.setFields(fieldsByTableName);
-			String outPutPath = ContextManager.getOutPutPath();
-			Writer entityOut = null;
-			Writer daoOut = null;
-			Writer serviceOut = null;
-			Writer controllerOut = null;
-			try {
-				if (tm.isEntity()) {
-					entityOut = new FileWriter(new File(
-							getFinalOutDir(outPutPath, tm.getPackageName(), "entity") + tm.getClassName() + ".java"));
-					this.outPut("entity", entityOut, tm);
-				}
-				if (tm.isDao()) {
-					daoOut = new FileWriter(new File(
-							getFinalOutDir(outPutPath, tm.getPackageName(), "dao") + tm.getClassName() + "Dao.java"));
-					this.outPut("dao", daoOut, tm);
-				}
-				if (tm.isService()) {
-					serviceOut = new FileWriter(new File(getFinalOutDir(outPutPath, tm.getPackageName(), "service")
-							+ tm.getClassName() + "Service.java"));
-					this.outPut("service", serviceOut, tm);
-				}
-				if (tm.isController()) {
-					controllerOut = new FileWriter(
-							new File(getFinalOutDir(outPutPath, tm.getPackageName(), "controller") + tm.getClassName()
-									+ "Controller.java"));
-					this.outPut("controller", controllerOut, tm);
-				}
-			} catch (IOException | TemplateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				close(entityOut);
-				close(daoOut);
-				close(serviceOut);
-				close(controllerOut);
+	protected Task<Boolean> createTask() {
+		return new Task<Boolean>() {
+			@Override
+			protected Boolean call() throws Exception {
+				TableBuilderService.this.conn = DatabaseContext.getConnection(null);
+				List<TableModel> tableModels = CodeTemplateContext.getAllBuildTableModels();
+				tableModels.forEach(tm -> {
+					List<FieldModel> fieldsByTableName = TableBuilderService.this.getFieldsByTableName(tm);
+					tm.setFields(fieldsByTableName);
+					String outPutPath = ContextManager.getOutPutPath();
+					Writer entityOut = null;
+					Writer daoOut = null;
+					Writer mapperOut = null;
+					Writer serviceOut = null;
+					Writer controllerOut = null;
+					try {
+						if (tm.isEntity()) {
+							entityOut = builderWriter(outPutPath, tm, "entity", "java");
+							TableBuilderService.this.outPut("entity", entityOut, tm);
+						}
+						if (tm.isDao()) {
+							daoOut = builderWriter(outPutPath, tm, "dao", "java");
+							TableBuilderService.this.outPut("dao", daoOut, tm);
+						}
+						if (tm.isMapper()) {
+							mapperOut = builderWriter(outPutPath, tm, "mapper", "xml");
+							TableBuilderService.this.outPut("mapper", mapperOut, tm);
+						}
+						if (tm.isService()) {
+							serviceOut = builderWriter(outPutPath, tm, "service", "java");
+							TableBuilderService.this.outPut("service", serviceOut, tm);
+						}
+						if (tm.isController()) {
+							controllerOut = builderWriter(outPutPath, tm, "controller", "java");
+							TableBuilderService.this.outPut("controller", controllerOut, tm);
+						}
+						TimeUnit.SECONDS.sleep(5);
+					} catch (IOException | TemplateException | InterruptedException e) {
+						e.printStackTrace();
+					} finally {
+						close(entityOut);
+						close(daoOut);
+						close(serviceOut);
+						close(controllerOut);
+					}
+				});
+				return true;
 			}
-		});
-		this.latch.countDown();
+		};
+	}
+
+	private Writer builderWriter(String outPutPath, TableModel tm, String type, String suffix) throws IOException {
+		suffix = ("entity".equals(type) ? "" : ComnUtils.firstToUpperCase(type)) + "." + suffix;
+		return new FileWriter(new File(getFinalOutDir(outPutPath, tm.getPackageName(), type) + tm.getClassName() + suffix));
 	}
 
 	private String getFinalOutDir(String basePath, String packageName, String type) {
