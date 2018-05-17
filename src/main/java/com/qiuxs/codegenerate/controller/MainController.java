@@ -5,11 +5,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
+import com.qiuxs.codegenerate.task.TaskExecuter;
+import com.qiuxs.codegenerate.task.TaskResult;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 import javafx.beans.value.ChangeListener;
@@ -155,11 +160,32 @@ public class MainController implements Initializable {
 	public void connBtnClick(MouseEvent event) {
 		initDatabaseInfo();
 		if (ContextManager.isComplete()) {
-			List<String> allSchemas = DatabaseContext.getAllSchemas();
-			schemaCmb.getItems().clear();
-			schemaCmb.getItems().addAll(allSchemas);
-			if (allSchemas.size() > 0) {
-				schemaCmb.getSelectionModel().select(0);
+			ContextManager.showLoading();
+			Future<TaskResult<List<String>>> taskFuture = TaskExecuter.executeTask(new Callable<TaskResult<List<String>>>() {
+				@Override
+				public TaskResult<List<String>> call() throws Exception {
+					try {
+						List<String> allSchemas = DatabaseContext.getAllSchemas();
+						return TaskResult.makeSuccess(allSchemas, "成功");
+					} catch (Exception e) {
+						return TaskResult.makeException(e);
+					}
+				}
+			});
+			try {
+				TaskResult<List<String>> taskResult = taskFuture.get();
+				if (taskResult.isSuccessFlag()) {
+					schemaCmb.getItems().clear();
+					schemaCmb.getItems().addAll(taskResult.getData());
+					if (schemaCmb.getItems().size() > 0) {
+						schemaCmb.getSelectionModel().select(0);
+					}
+					ContextManager.hideLoading();
+				} else {
+					ContextManager.showAlert(taskResult.getMsg());
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 		} else {
 			ContextManager.showAlert("数据库信息不完整！！！");

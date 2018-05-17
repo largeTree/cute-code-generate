@@ -80,7 +80,7 @@ public class TableBuilderService extends Service<Boolean> {
 							controllerOut = builderWriter(outPutPath, tm, "controller", "java");
 							TableBuilderService.this.outPut("controller", controllerOut, tm);
 						}
-						TimeUnit.SECONDS.sleep(5);
+						TimeUnit.MICROSECONDS.sleep(500);
 					} catch (IOException | TemplateException | InterruptedException e) {
 						e.printStackTrace();
 					} finally {
