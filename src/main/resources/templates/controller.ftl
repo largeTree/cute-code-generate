@@ -11,7 +11,7 @@ import ${packageName}.entity.${className};
 import ${packageName}.service.${className}Service;
 
 /**
- * ${desc}控制器
+ * ${desc!}控制器
  *
  * @author ${author}
  *

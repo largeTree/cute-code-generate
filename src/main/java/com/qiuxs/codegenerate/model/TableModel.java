@@ -2,6 +2,7 @@ package com.qiuxs.codegenerate.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class TableModel {
 
 	private List<FieldModel> fields;
 
-	private Set<String> importClasses;
+	private Set<String> importClasses = new HashSet<>();
 
 	public boolean isBuildFlag() {
 		return buildFlag;

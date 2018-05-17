@@ -83,7 +83,9 @@ public class DatabaseContext {
 			if (ComnUtils.isNotBlank(schema)) {
 				Optional<Statement> statement = Optional.ofNullable(tconn.createStatement());
 				statement.get().execute("use " + schema + ";");
-				currentSchema = schema;
+				if (schema != null) {
+					currentSchema = schema;
+				}
 				close(statement);
 			}
 		} catch (SQLException e) {

@@ -9,7 +9,7 @@ import ${packageName}.dao.UserDao;
 import ${packageName}.entity.User;
 
 /**
- * ${desc}服务类
+ * ${desc!}服务类
  *
  * @author ${author}
  *

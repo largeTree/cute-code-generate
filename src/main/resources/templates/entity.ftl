@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import com.qiuxs.frm.persistent.entiry.AbstractEntity;
 
 /**
- * ${desc}实体类
+ * ${desc!}实体类
  *	for table ${tableName}
  * @author ${author!}
  *

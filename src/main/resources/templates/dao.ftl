@@ -6,7 +6,7 @@ import com.qiuxs.frm.persistent.dao.IBaseDao;
 import ${packageName}.entity.${className};
 
 /**
- * ${desc}Dao接口
+ * ${desc!}Dao接口
  *
  * @author ${author}
  *
