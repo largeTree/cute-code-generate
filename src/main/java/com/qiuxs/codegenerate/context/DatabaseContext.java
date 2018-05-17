@@ -17,34 +17,27 @@ public class DatabaseContext {
 	private static Optional<Connection> conn = Optional.empty();
 	private static String currentSchema = null;
 
-	public static List<String> getAllSchemas() {
+	public static List<String> getAllSchemas() throws SQLException {
 		Connection informationSchemaConnection = null;
 		Optional<Statement> statement = null;
 		Optional<ResultSet> rs = null;
 		List<String> allSchema = new ArrayList<>();
-		try {
-			informationSchemaConnection = getConnection("information_schema");
-			statement = Optional.ofNullable(informationSchemaConnection.createStatement());
-			rs = Optional.ofNullable(statement.get().executeQuery(SELECT_SCHEMA_SQL));
-			rs.ifPresent(r -> {
-				try {
-					while (r.next()) {
-						allSchema.add(r.getString(1));
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+		informationSchemaConnection = getConnection("information_schema");
+		statement = Optional.ofNullable(informationSchemaConnection.createStatement());
+		rs = Optional.ofNullable(statement.get().executeQuery(SELECT_SCHEMA_SQL));
+		rs.ifPresent(r -> {
+			try {
+				while (r.next()) {
+					allSchema.add(r.getString(1));
 				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(statement);
-			close(rs);
-		}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
 		return allSchema;
 	}
 
-	public static List<String> getAllTablesBySchema(String schema) {
+	public static List<String> getAllTablesBySchema(String schema) throws SQLException {
 		currentSchema = schema;
 		Connection conn = getConnection(schema);
 		List<String> tableNames = new ArrayList<>();
@@ -66,43 +59,36 @@ public class DatabaseContext {
 	 * @param database
 	 *            目标数据库
 	 * @return
+	 * @throws SQLException
 	 */
-	public static Connection getConnection(String schema) {
-		try {
-			Connection tconn = null;
-			if (conn.isPresent() && !conn.get().isClosed()) {
-				tconn = conn.get();
-			} else {
-				conn = newConnection(schema);
-				tconn = conn.get();
+	public static Connection getConnection(String schema) throws SQLException {
+		Connection tconn = null;
+		if (conn.isPresent() && !conn.get().isClosed()) {
+			tconn = conn.get();
+		} else {
+			conn = newConnection(schema);
+			tconn = conn.get();
+		}
+		if (schema == null) {
+			schema = currentSchema;
+		}
+		// 目标数据库不为空时 切换一下数据库
+		if (ComnUtils.isNotBlank(schema)) {
+			Optional<Statement> statement = Optional.ofNullable(tconn.createStatement());
+			statement.get().execute("use " + schema + ";");
+			if (schema != null) {
+				currentSchema = schema;
 			}
-			if (schema == null) {
-				schema = currentSchema;
-			}
-			// 目标数据库不为空时 切换一下数据库
-			if (ComnUtils.isNotBlank(schema)) {
-				Optional<Statement> statement = Optional.ofNullable(tconn.createStatement());
-				statement.get().execute("use " + schema + ";");
-				if (schema != null) {
-					currentSchema = schema;
-				}
-				close(statement);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			close(statement);
 		}
 		return conn.get();
 	}
 
-	public static Optional<Connection> newConnection(String schema) {
+	public static Optional<Connection> newConnection(String schema) throws SQLException {
 		currentSchema = schema;
 		String url = "jdbc:mysql://" + ContextManager.getHost() + ":" + ContextManager.getPort() + "/" + currentSchema;
-		try {
-			return Optional.ofNullable(
-					DriverManager.getConnection(url, ContextManager.getUserName(), ContextManager.getPassword()));
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		return Optional.ofNullable(
+				DriverManager.getConnection(url, ContextManager.getUserName(), ContextManager.getPassword()));
 	}
 
 	public static void destory() {
@@ -127,6 +113,20 @@ public class DatabaseContext {
 
 	public static String getCurrentSchame() {
 		return currentSchema;
+	}
+
+	public static void clear() {
+		conn.ifPresent(con -> {
+			try {
+				if (!con.isClosed()) {
+					con.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
+		conn = Optional.empty();
+		currentSchema = null;
 	}
 
 }

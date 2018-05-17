@@ -4,14 +4,14 @@
 
 	<sql id="allFields">
 		<#list fields as field>
-		${field.columnName} <#if field.name != field.columnName>as ${field.name}</#if><#if fields_index < fields?size>,<#/if>
+		${field.columnName}<#if field.name != field.columnName> as ${field.name}</#if><#if field_index &lt; fields?size - 1>,</#if>
 		</#list>
 	</sql>
 
 	<sql id="insertFields">
 		<#list fields as field>
-		${field.columnName}<#if fields_index < fields?size>,<#/if>
-		</#if>
+		${field.columnName}<#if field_index &lt; fields?size - 1>,</#if>
+		</#list>
 	</sql>
 
 	<select id="list" resultType="${packageName}.entity.${className}" >
@@ -22,7 +22,7 @@
 			<include refid="comnWhere" />
 		</where>
 		<if test="orderBy != null" >
-			order by ${orderBy}
+			order by ${r'${orderBy}'}
 			<if test="orderByDesc != null">
 				desc
 			</if>
@@ -32,7 +32,7 @@
 	<sql id="comnWhere">
 		<#list fields as field>
 		<if test="${field.name} != null">
-			<#if fields_index > 0> and </#if>${field.columnName} = #{${field.name}}
+			<#if field_index &gt; 0> and </#if>${field.columnName} = ${r'#{'}${field.name}${r'}'}
 		</if>
 		</#list>
 	</sql>
@@ -40,23 +40,23 @@
 	<select id="getByIds" resultType="${packageName}.entity.${className}" >
 		select <include refid="allFields" /> from user where id in
 		<foreach collection="list" item="item" open="(" separator="," close=")" >
-			#{item}
+			${r'#{item}'}
 		</foreach>
 	</select>
 
 	<select id="get" resultType="${packageName}.entity.${className}" >
-		select <include refid="allFields" /> from ${tableName} where id = #{id}
+		select <include refid="allFields" /> from ${tableName} where id = ${r'#{id}'}
 	</select>
 
 	<delete id="deleteById" parameterType="Long" >
-		delete from ${tableName} where id = #{id}
+		delete from ${tableName} where id = ${r'#{id}'}
 	</delete>
 
 	<insert id="insert" parameterType="${packageName}.entity.${className}">
 		insert into ${tableName}(<include refid="insertFields" />)
 		values(
 			<#list fields as field>
-			#{${field.name}}<#if fields_index < fields?size>,</#if>
+			${r'#{'}${field.name}${r'}'}<#if field_index &lt; fields?size - 1>,</#if>
 			</#list>
 		)
 	</insert>
@@ -67,20 +67,20 @@
 		<foreach collection="list" item="item" separator="," >
 			(
 				<#list fields as field>
-				#{item.${field.name}}<#if fields_index < fields?size>,</#if>
+				${r'#{item.'}${field.name}${r'}'}<#if field_index &lt; fields?size - 1>,</#if>
 				</#list>
 			)
 		</foreach>
 	</insert>
 
 	<update id="update" parameterType="${packageName}.entity.${className}" >
-		update ${tableName} <include refid="setComn" /> where id = #{id}
+		update ${tableName} <include refid="setComn" /> where id = ${r'#{id}'}
 	</update>
 
 	<sql id="setComn" >
 	<#list fields as field>
 		<if test="${field.name} != null" >
-			${field.columnName} = #{${field.name}}<#if fields_index < fields?size>,</#if>
+			${field.columnName} = ${r'#{'}${field.name}${r'}'}<#if field_index &lt; fields?size - 1>,</#if>
 		</if>
 	</#list>
 	</sql>

@@ -1,5 +1,8 @@
 package com.qiuxs.codegenerate.model;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 public class FieldModel {
@@ -48,24 +51,27 @@ public class FieldModel {
 	private String getJavaType(String dbType) {
 		String javaType = null;
 		switch (dbType) {
+		case "char":
+			javaType = Character.class.getSimpleName();
+			break;
 		case "int":
 		case "tinyint":
-			javaType = "Integer";
+			javaType = Integer.class.getSimpleName();
 			break;
 		case "bigint":
-			javaType = "Long";
+			javaType = Long.class.getSimpleName();
 			break;
 		case "varchar":
 		case "json":
 		case "text":
-			javaType = "String";
+			javaType = String.class.getSimpleName();
 			break;
 		case "decimal":
-			javaType = "BigDecimal";
+			javaType = BigDecimal.class.getSimpleName();
 			break;
 		case "date":
 		case "datetime":
-			javaType = "Date";
+			javaType = Date.class.getSimpleName();
 			break;
 		}
 		return javaType;

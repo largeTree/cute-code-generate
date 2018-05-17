@@ -6,6 +6,7 @@ import com.qiuxs.codegenerate.TableBuilderService;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 import javafx.concurrent.Service;
+import javafx.concurrent.Worker.State;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -138,6 +139,8 @@ public class ContextManager {
 				alertStage.initOwner(getPrimaryStage());
 				alertStage.initModality(Modality.APPLICATION_MODAL);
 				alertStage.initStyle(StageStyle.UTILITY);
+				alertStage.setWidth(300);
+				alertStage.setHeight(200);
 				Parent alert_main = FXMLLoader.load(ContextManager.class.getResource("/alert.fxml"));
 				alertStage.setScene(new Scene(alert_main));
 			}
@@ -153,7 +156,8 @@ public class ContextManager {
 	 * @return
 	 */
 	public static boolean isComplete() {
-		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host) && ComnUtils.isNotBlank(port);
+		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host)
+				&& ComnUtils.isNotBlank(port);
 	}
 
 	public static void setOutPutPath(String outPutPath) {
@@ -166,6 +170,10 @@ public class ContextManager {
 
 	public static void startBuilder() {
 		showLoading();
+		State state = builderService.getState();
+		if (state != State.READY) {
+			builderService.reset();
+		}
 		builderService.start();
 	}
 

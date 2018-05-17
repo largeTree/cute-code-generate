@@ -13,9 +13,9 @@
     <Label layoutX="72.0" layoutY="17.0" text="User：" />
     <TextField fx:id="userInput" layoutX="120.0" layoutY="14.0" prefWidth="200.0" text="root" />
     <Label layoutX="482.0" layoutY="17.0" text="Password：" />
-    <PasswordField fx:id="passInput" layoutX="566.0" layoutY="14.0" prefWidth="200.0" text="000000" />
+    <PasswordField fx:id="passInput" layoutX="566.0" layoutY="14.0" prefWidth="200.0" text="123456" />
     <Label layoutX="71.0" layoutY="56.0" text="Host：" />
-    <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="127.0.0.1" />
+    <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="192.168.0.3" />
     <Label layoutX="520.0" layoutY="56.0" text="Port：" />
     <TextField fx:id="portInput" layoutX="566.0" layoutY="53.0" prefWidth="200.0" text="3306" />
     <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />

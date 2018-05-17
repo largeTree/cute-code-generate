@@ -29,14 +29,14 @@ public class TaskResult<T> {
 	public static <T> TaskResult<T> makeError(String msg) {
 		TaskResult<T> res = new TaskResult<T>();
 		res.setMsg(msg);
-		res.setSuccessFlag(true);
+		res.setSuccessFlag(false);
 		return res;
 	}
 
 	public static <T> TaskResult<T> makeException(Exception e) {
 		TaskResult<T> res = new TaskResult<T>();
 		res.setMsg(e.getLocalizedMessage());
-		res.setSuccessFlag(true);
+		res.setSuccessFlag(false);
 		return res;
 	}
 

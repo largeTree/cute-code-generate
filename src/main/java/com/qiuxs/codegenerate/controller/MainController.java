@@ -2,23 +2,23 @@ package com.qiuxs.codegenerate.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
-import com.qiuxs.codegenerate.task.TaskExecuter;
 import com.qiuxs.codegenerate.task.TaskResult;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -85,10 +85,18 @@ public class MainController implements Initializable {
 		// 选择数据库
 		this.schemaCmb.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
 			this.tableList.getItems().clear();
-			List<String> tables = DatabaseContext.getAllTablesBySchema(newVal);
-			for (String tableName : tables) {
-				this.tableList.getItems().add(getTablePane(tableName));
+			Optional<List<String>> tablesOpt = null;
+			try {
+				tablesOpt = Optional.ofNullable(DatabaseContext.getAllTablesBySchema(newVal));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				ContextManager.showAlert(e.getLocalizedMessage());
 			}
+			tablesOpt.ifPresent(tables -> {
+				for (String tableName : tables) {
+					this.tableList.getItems().add(getTablePane(tableName));
+				}
+			});
 		});
 
 		// 选择表
@@ -161,38 +169,44 @@ public class MainController implements Initializable {
 		initDatabaseInfo();
 		if (ContextManager.isComplete()) {
 			ContextManager.showLoading();
-			Future<TaskResult<List<String>>> taskFuture = TaskExecuter.executeTask(new Callable<TaskResult<List<String>>>() {
+			Service<TaskResult<List<String>>> connectionService = new Service<TaskResult<List<String>>>() {
 				@Override
-				public TaskResult<List<String>> call() throws Exception {
-					try {
-						List<String> allSchemas = DatabaseContext.getAllSchemas();
-						return TaskResult.makeSuccess(allSchemas, "成功");
-					} catch (Exception e) {
-						return TaskResult.makeException(e);
-					}
+				protected Task<TaskResult<List<String>>> createTask() {
+					return new Task<TaskResult<List<String>>>() {
+						@Override
+						protected TaskResult<List<String>> call() throws Exception {
+							try {
+								List<String> allSchemas = DatabaseContext.getAllSchemas();
+								return TaskResult.makeSuccess(allSchemas, "成功");
+							} catch (Exception e) {
+								return TaskResult.makeException(e);
+							}
+						}
+					};
 				}
-			});
-			try {
-				TaskResult<List<String>> taskResult = taskFuture.get();
+			};
+			connectionService.start();
+			connectionService.setOnSucceeded((value) -> {
+				TaskResult<List<String>> taskResult = connectionService.getValue();
+				ContextManager.hideLoading();
 				if (taskResult.isSuccessFlag()) {
 					schemaCmb.getItems().clear();
 					schemaCmb.getItems().addAll(taskResult.getData());
 					if (schemaCmb.getItems().size() > 0) {
 						schemaCmb.getSelectionModel().select(0);
 					}
-					ContextManager.hideLoading();
 				} else {
 					ContextManager.showAlert(taskResult.getMsg());
 				}
-			} catch (InterruptedException | ExecutionException e) {
-				ContextManager.showAlert(e.getLocalizedMessage());
-			}
+			});
+
 		} else {
 			ContextManager.showAlert("数据库信息不完整！！！");
 		}
 	}
 
 	private void initDatabaseInfo() {
+		DatabaseContext.clear();
 		String userName = this.userInput.getText();
 		String password = this.passInput.getText();
 		String host = this.hostInput.getText();
@@ -266,6 +280,9 @@ public class MainController implements Initializable {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 			MainController.this.setDisableFlag(oldValue);
+			if (MainController.this.currentTableModel == null) {
+				return;
+			}
 			MainController.this.currentTableModel.setBuildFlag(newValue);
 		}
 
