@@ -117,8 +117,15 @@ public class MainController implements Initializable {
 			TableModel tableModel = CodeTemplateContext.getOrCreateTableModel(tableName);
 			// 设置为当前表模型
 			this.currentTableModel = tableModel;
+			CheckBox ckBox = (CheckBox) newVal.getChildren().get(0);
+			// 第一次单击时 如果没有勾选则自动勾选一下
+			if (ckBox.getUserData() == null && !ckBox.isSelected()) {
+				ckBox.setSelected(true);
+				// 设置一个userData，认为已经自动勾选过
+				ckBox.setUserData(new Object());
+			}
 			// 设置当前表是否需要构建
-			this.currentTableModel.setBuildFlag(((CheckBox) newVal.getChildren().get(0)).isSelected());
+			this.currentTableModel.setBuildFlag(ckBox.isSelected());
 			// 还未设置过类名的情况下，自动生成一个类名
 			if (ComnUtils.isBlank(this.currentTableModel.getClassName())) {
 				this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(tableName)));
@@ -173,7 +180,6 @@ public class MainController implements Initializable {
 		// 选择框
 		CheckBox tbCk = new CheckBox();
 		tbCk.setText("");
-		tbCk.setUserData(tableName);
 		tbCk.selectedProperty().addListener(new tableBoxChangedListener());
 		// 表名显示文字
 		Label tableNameLabel = new Label(tableName);
