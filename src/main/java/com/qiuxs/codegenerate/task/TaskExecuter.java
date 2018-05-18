@@ -17,7 +17,7 @@ public class TaskExecuter {
 	private static Service<Boolean> builderService = new TableBuilderService();
 
 	@SuppressWarnings("unchecked")
-	public static <V, T extends TaskResult<V>> Future<T> executeTask(Task<T> callable) {
+	public static <T> Future<T> executeTask(Task<T> callable) {
 		return (Future<T>) thread_pool.submit(callable);
 	}
 

@@ -2,6 +2,7 @@ package com.qiuxs.codegenerate.context;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,6 +20,8 @@ public class DatabaseContext {
 
 	private static final String SELECT_SCHEMA_SQL = "SELECT SCHEMA_NAME FROM `SCHEMATA` WHERE SCHEMA_NAME NOT IN ('information_schema','performance_schema','sys','mysql')";
 	private static final String SELECT_TABLES_CURRENT_SCHEMA = "SELECT table_name FROM information_schema.`TABLES` WHERE TABLE_SCHEMA = DATABASE()";
+	private static String GET_TABLE_DESC = "SELECT TABLE_COMMENT FROM information_schema.`TABLES` WHERE table_name = ? AND TABLE_SCHEMA = DATABASE()";
+
 	private static Optional<Connection> conn = Optional.empty();
 	private static String currentSchema = null;
 
@@ -52,6 +55,18 @@ public class DatabaseContext {
 			tableNames.add(rs.getString(1));
 		}
 		return tableNames;
+	}
+
+	public static String getTableDesc(String tableName) throws SQLException {
+		Connection conn = getConnection(null);
+		PreparedStatement statement = conn.prepareStatement(GET_TABLE_DESC);
+		statement.setString(1, tableName);
+		ResultSet rs = statement.executeQuery();
+		String tableComment = tableName;
+		if (rs.next()) {
+			tableComment = rs.getString(1);
+		}
+		return tableComment;
 	}
 
 	/**

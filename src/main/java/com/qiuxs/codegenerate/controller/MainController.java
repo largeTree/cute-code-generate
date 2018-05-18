@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 
@@ -125,6 +126,21 @@ public class MainController implements Initializable {
 			// 还未设置过包名的情况下 自动生成一个包名
 			if (ComnUtils.isBlank(this.currentTableModel.getPackageName())) {
 				this.currentTableModel.setPackageName("com." + this.author.getText() + ".");
+			}
+			Task<String> getTableDescTask = new Task<String>() {
+				@Override
+				protected String call() throws Exception {
+					String tableDesc = DatabaseContext.getTableDesc(tableName);
+					return tableDesc;
+				}
+			};
+			TaskExecuter.executeTask(getTableDescTask);
+			try {
+				String tableDesc = getTableDescTask.get();
+				this.currentTableModel.setDesc(tableDesc);
+			} catch (InterruptedException | ExecutionException e) {
+				log.error("ext=" + e.getLocalizedMessage(), e);
+				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 			// 刷新控件
 			this.refreshControl();
