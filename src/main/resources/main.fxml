@@ -63,7 +63,4 @@
       </content>
     </TitledPane>
   </children>
-  <stylesheets>
-    <URL value="@main.css" />
-  </stylesheets>
 </AnchorPane>
