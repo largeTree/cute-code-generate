@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" name="slhlog" packages="org.apache.logging.log4j.test">
+	<Properties>
+		<Property name="filename">${sys:WORKDIR}/../logs/mylog</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="STDOUT">
+			<PatternLayout pattern="%d{MM-dd HH:mm:ss.SSS} %-5p [%t] %C{1}.%M:%L: %m %X%n" />
+		</Console>
+		<RollingFile name="RollingFile" fileName="${filename}" filePattern="${sys:WORKDIR}/../logs/mylog-%d{yyyyMMddHHmmssSSS}">
+			<PatternLayout>
+				<pattern>%d{MM-dd HH:mm:ss.SSS} %-5p [%t] %C{1}.%M:%L: %m %X%n</pattern>
+			</PatternLayout>
+			<TimeBasedTriggeringPolicy interval="86400000" modulate="true" />
+		</RollingFile>
+		<File name="ErrorFile" fileName="${sys:WORKDIR}/../logs/error.log">
+			<PatternLayout>
+				<pattern>%d{MM-dd HH:mm:ss.SSS} %-5p [%t] %C{1}.%M:%L: %m %X%n</pattern>
+			</PatternLayout>
+		</File>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="com.qiuxs" level="info">
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+
+</Configuration>

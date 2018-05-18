@@ -15,16 +15,16 @@
     <Label layoutX="482.0" layoutY="17.0" text="Password：" />
     <PasswordField fx:id="passInput" layoutX="566.0" layoutY="14.0" prefWidth="200.0" text="123456" />
     <Label layoutX="71.0" layoutY="56.0" text="Host：" />
-    <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="192.168.0.3" />
+    <TextField fx:id="hostInput" layoutX="120.0" layoutY="53.0" prefWidth="200.0" text="127.0.0.1" />
     <Label layoutX="520.0" layoutY="56.0" text="Port：" />
     <TextField fx:id="portInput" layoutX="566.0" layoutY="53.0" prefWidth="200.0" text="3306" />
-    <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
-    <Button fx:id="buildBtn" layoutX="567.0" layoutY="94.0" mnemonicParsing="false" onMouseClicked="#buildBtnClick" text="Begin Build" />
     <ComboBox fx:id="schemaCmb" layoutX="120.0" layoutY="96.0" prefWidth="200.0">
       <items>
         <FXCollections fx:factory="observableArrayList" />
       </items>
     </ComboBox>
+    <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
+    <Button fx:id="buildBtn" layoutX="567.0" layoutY="94.0" mnemonicParsing="false" onMouseClicked="#buildBtnClick" text="Begin Build" />
     <Label layoutX="48.0" layoutY="96.0" text="Schame：" />
     <TitledPane animated="false" collapsible="false" layoutX="48.0" layoutY="141.0" prefHeight="417.0" text="表" wrapText="false">
       <content>
@@ -43,21 +43,21 @@
             <Separator layoutX="2.0" layoutY="88.0" prefWidth="550.0" />
             <TextField fx:id="outPutPathInput" editable="false" layoutX="118.0" layoutY="9.0" prefWidth="200.0" />
             <Button fx:id="outPutPathChooserBtn" layoutX="335.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#outPutPathBtnClick" text="选择" />
+            <Label layoutX="34.0" layoutY="101.0" text="Package：" />
+            <TextField fx:id="author" layoutX="119.0" layoutY="48.0" prefWidth="200.0" />
+            <Label layoutX="43.0" layoutY="51.0" text="Author：" />
+            <TextField fx:id="packageName" layoutX="121.0" layoutY="101.0" prefWidth="380.0" />
             <Label layoutX="16.0" layoutY="140.0" text="SuperClass：" />
             <TextField fx:id="superClass" layoutX="120.0" layoutY="137.0" prefWidth="380.0" text="" />
             <Label layoutX="16.0" layoutY="179.0" text="ClassName：" />
             <TextField fx:id="className" layoutX="120.0" layoutY="175.0" prefWidth="380.0" />
-            <Label layoutX="34.0" layoutY="101.0" text="Package：" />
-            <TextField fx:id="packageName" layoutX="121.0" layoutY="101.0" prefWidth="380.0" />
+            <Label layoutX="61.0" layoutY="218.0" text="Desc：" />
+            <TextField fx:id="desc" layoutX="120.0" layoutY="215.0" prefWidth="380.0" />
             <CheckBox fx:id="entityCkBox" layoutX="121.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Entity" />
             <CheckBox fx:id="daoCkBox" layoutX="208.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Dao" />
+            <CheckBox fx:id="mapperCkBox" layoutX="286.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Mapper" />
             <CheckBox fx:id="serviceCkBox" layoutX="379.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Service" />
             <CheckBox fx:id="controllerCkBox" layoutX="121.0" layoutY="303.0" mnemonicParsing="false" selected="false" text="Cntroller" />
-            <Label layoutX="43.0" layoutY="51.0" text="Author：" />
-            <TextField id="outPutPathInput" fx:id="author" layoutX="119.0" layoutY="48.0" prefWidth="200.0" />
-            <Label layoutX="61.0" layoutY="218.0" text="Desc：" />
-            <TextField id="className" fx:id="desc" layoutX="120.0" layoutY="215.0" prefWidth="380.0" />
-            <CheckBox id="entityCkBox" fx:id="mapperCkBox" layoutX="286.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Mapper" />
           </children>
         </AnchorPane>
       </content>

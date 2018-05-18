@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
+import com.qiuxs.codegenerate.task.TaskExecuter;
 import com.qiuxs.codegenerate.task.TaskResult;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
@@ -19,6 +22,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -34,6 +39,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
 public class MainController implements Initializable {
+
+	private static Logger log = Logger.getLogger(MainController.class);
 
 	@FXML
 	private TextField userInput;
@@ -89,7 +96,7 @@ public class MainController implements Initializable {
 			try {
 				tablesOpt = Optional.ofNullable(DatabaseContext.getAllTablesBySchema(newVal));
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("find schemas failed", e);
 				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 			tablesOpt.ifPresent(tables -> {
@@ -168,7 +175,7 @@ public class MainController implements Initializable {
 	public void connBtnClick(MouseEvent event) {
 		initDatabaseInfo();
 		if (ContextManager.isComplete()) {
-			ContextManager.showLoading();
+			this.makeLoading(this.connBtn, "Connecting...");
 			Service<TaskResult<List<String>>> connectionService = new Service<TaskResult<List<String>>>() {
 				@Override
 				protected Task<TaskResult<List<String>>> createTask() {
@@ -179,6 +186,7 @@ public class MainController implements Initializable {
 								List<String> allSchemas = DatabaseContext.getAllSchemas();
 								return TaskResult.makeSuccess(allSchemas, "成功");
 							} catch (Exception e) {
+								log.error("ext=" + e.getLocalizedMessage(), e);
 								return TaskResult.makeException(e);
 							}
 						}
@@ -187,8 +195,8 @@ public class MainController implements Initializable {
 			};
 			connectionService.start();
 			connectionService.setOnSucceeded((value) -> {
+				this.finishLoading(this.connBtn, "Connection");
 				TaskResult<List<String>> taskResult = connectionService.getValue();
-				ContextManager.hideLoading();
 				if (taskResult.isSuccessFlag()) {
 					schemaCmb.getItems().clear();
 					schemaCmb.getItems().addAll(taskResult.getData());
@@ -205,8 +213,19 @@ public class MainController implements Initializable {
 		}
 	}
 
+	private void makeLoading(Button btn, String text) {
+		btn.setText(text);
+		btn.setDisable(true);
+	}
+
+	private void finishLoading(Button btn, String text) {
+		btn.setText(text);
+		btn.setDisable(false);
+	}
+
 	private void initDatabaseInfo() {
-		DatabaseContext.clear();
+		// 初始化数据库信息的时候 先销毁原来的数据库上下文
+		DatabaseContext.destory();
 		String userName = this.userInput.getText();
 		String password = this.passInput.getText();
 		String host = this.hostInput.getText();
@@ -223,7 +242,13 @@ public class MainController implements Initializable {
 			return;
 		}
 		this.refreshTableModel();
-		ContextManager.startBuilder();
+		this.makeLoading(this.buildBtn, "Building...");
+		TaskExecuter.startBuilder(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				MainController.this.finishLoading(MainController.this.buildBtn, "Begin Build");
+			}
+		});
 	}
 
 	@FXML
@@ -285,6 +310,5 @@ public class MainController implements Initializable {
 			}
 			MainController.this.currentTableModel.setBuildFlag(newValue);
 		}
-
 	}
 }
