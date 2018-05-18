@@ -1,21 +1,14 @@
 package com.qiuxs.codegenerate.context;
 
-import java.io.IOException;
-
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.stage.Modality;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class ContextManager {
 
 	private static Stage primaryStage;
-	private static Stage alertStage;
 
 	private static String userName;
 	private static String password;
@@ -74,35 +67,6 @@ public class ContextManager {
 	}
 
 	public static void destory() {
-		if (alertStage != null) {
-			alertStage.close();
-		}
-	}
-
-	public static void showAlert(String text) {
-		Stage stage = getAlertStage();
-		Scene scene = stage.getScene();
-		Label label = (Label) scene.getRoot().getChildrenUnmodifiable().get(0);
-		label.setText(text);
-		stage.show();
-	}
-
-	private static Stage getAlertStage() {
-		try {
-			if (alertStage == null) {
-				alertStage = new Stage();
-				alertStage.initOwner(getPrimaryStage());
-				alertStage.initModality(Modality.APPLICATION_MODAL);
-				alertStage.initStyle(StageStyle.UTILITY);
-				alertStage.setWidth(300);
-				alertStage.setHeight(200);
-				Parent alert_main = FXMLLoader.load(ContextManager.class.getResource("/alert.fxml"));
-				alertStage.setScene(new Scene(alert_main));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return alertStage;
 	}
 
 	/**
@@ -120,6 +84,13 @@ public class ContextManager {
 
 	public static String getOutPutPath() {
 		return outPutPath;
+	}
+
+	public static void showAlert(String content) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Erro");
+		alert.setContentText(content);
+		alert.show();
 	}
 
 }
