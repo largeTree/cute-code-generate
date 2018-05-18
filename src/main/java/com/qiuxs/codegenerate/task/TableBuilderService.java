@@ -20,7 +20,6 @@ import com.qiuxs.codegenerate.model.FieldModel;
 import com.qiuxs.codegenerate.model.TableModel;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
-import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -39,11 +38,12 @@ public class TableBuilderService extends Service<Boolean> {
 
 	public TableBuilderService() {
 		this.conf = new Configuration(Configuration.VERSION_2_3_25);
-		try {
-			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
+			this.conf.setClassForTemplateLoading(getClass(), "/templates");
+//		} catch (IOException e) {
+//			log.error("set templateLoader error ext=" + e.getLocalizedMessage(), e);
+//		}
 	}
 
 	@Override

@@ -52,26 +52,21 @@
 		<pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
 			<plugins>
 				<plugin>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<configuration>
-						<appendAssemblyId>false</appendAssemblyId>
-						<descriptorRefs>
-							<descriptorRef>jar-with-dependencies</descriptorRef>
-						</descriptorRefs>
-						<archive>
-							<manifest>
-								<!-- 此处指定main方法入口的class -->
-								<mainClass>com.qiuxs.codegenerate.ApplicationEntry</mainClass>
-							</manifest>
-						</archive>
-					</configuration>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
 					<executions>
 						<execution>
-							<id>make-assembly</id>
-							<phase>package</phase>
+							<id>copy-dependencies</id>
+							<phase>prepare-package</phase>
 							<goals>
-								<goal>assembly</goal>
+								<goal>copy-dependencies</goal>
 							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/lib</outputDirectory>
+								<overWriteReleases>false</overWriteReleases>
+								<overWriteSnapshots>false</overWriteSnapshots>
+								<overWriteIfNewer>true</overWriteIfNewer>
+							</configuration>
 						</execution>
 					</executions>
 				</plugin>
@@ -105,10 +100,11 @@
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
-				<!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.0.2</version>
+					<!-- <executions> <execution> <id>copy-resources</id> <phase>package</phase> <goals> <goal>copy-resources</goal> </goals> <configuration> <outputDirectory>${basedir}/target/templates</outputDirectory>
+						<resources> <resource> <directory>src/main/resources/templates</directory> </resource> </resources> </configuration> </execution> </executions> -->
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
