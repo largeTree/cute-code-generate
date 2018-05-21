@@ -26,7 +26,7 @@
     <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
     <Button fx:id="buildBtn" layoutX="567.0" layoutY="94.0" mnemonicParsing="false" onMouseClicked="#buildBtnClick" text="Begin Build" />
     <Label layoutX="48.0" layoutY="96.0" text="Schame：" />
-    <TitledPane animated="false" collapsible="false" layoutX="48.0" layoutY="141.0" prefHeight="417.0" text="表" wrapText="false">
+    <TitledPane fx:id="tablePane" animated="false" collapsible="false" layoutX="48.0" layoutY="141.0" prefHeight="417.0" text="表" wrapText="false">
       <content>
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="389.0000915527344" prefWidth="200.0">
           <children>

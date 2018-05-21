@@ -35,6 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -57,6 +58,8 @@ public class MainController implements Initializable {
 	private Button buildBtn;
 	@FXML
 	private ComboBox<String> schemaCmb;
+	@FXML
+	private TitledPane tablePane;
 	@FXML
 	private ListView<Pane> tableList;
 	@FXML
@@ -101,6 +104,7 @@ public class MainController implements Initializable {
 				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 			tablesOpt.ifPresent(tables -> {
+				tablePane.setText(tablePane.getText() + "(" + tables.size() + ")");
 				for (String tableName : tables) {
 					this.tableList.getItems().add(getTablePane(tableName));
 				}
