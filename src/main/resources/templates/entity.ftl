@@ -2,12 +2,9 @@ package ${packageName}.entity;
 
 <#if importClasses??>
 <#list importClasses as importClass>
-import ${importClass};
+import ${importClass}
 </#list>
 </#if>
-
-import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
 
 import com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity;
 
@@ -17,7 +14,6 @@ import com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity;
  * @author ${author!}
  *
  */
-@Entity
 public class ${className} extends AbstractEntity<${pkClass}> {
 
 	<#list fields as field>
@@ -32,7 +28,7 @@ public class ${className} extends AbstractEntity<${pkClass}> {
 	 * @return ${field.name}
 	 */
 	public ${field.javaType} <#if field.javaType == 'Boolean'>is<#else>get</#if>${field.name?cap_first}() {
-		return this.${field.name}
+		return this.${field.name};
 	}
 
 	/**
