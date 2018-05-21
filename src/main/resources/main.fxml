@@ -26,7 +26,7 @@
     <Button fx:id="connBtn" layoutX="396.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#connBtnClick" text="Connection" />
     <Button fx:id="buildBtn" layoutX="567.0" layoutY="94.0" mnemonicParsing="false" onMouseClicked="#buildBtnClick" text="Begin Build" />
     <Label layoutX="48.0" layoutY="96.0" text="Schame：" />
-    <TitledPane fx:id="tablePane" animated="false" collapsible="false" layoutX="48.0" layoutY="141.0" prefHeight="417.0" text="表" wrapText="false">
+    <TitledPane fx:id="tablePane" animated="false" collapsible="false" layoutX="48.0" layoutY="171.0" prefHeight="387.0" text="表" wrapText="false">
       <content>
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="389.0000915527344" prefWidth="200.0">
           <children>
@@ -40,13 +40,13 @@
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <children>
             <Label layoutX="10.0" layoutY="12.0" text="OutPutPath：" />
-            <Separator layoutX="2.0" layoutY="88.0" prefWidth="550.0" />
+            <Separator layoutX="0.0" layoutY="124.0" prefWidth="550.0" />
             <TextField fx:id="outPutPathInput" editable="false" layoutX="118.0" layoutY="9.0" prefWidth="200.0" />
             <Button fx:id="outPutPathChooserBtn" layoutX="335.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#outPutPathBtnClick" text="选择" />
-            <Label layoutX="34.0" layoutY="101.0" text="Package：" />
+            <Label layoutX="34.0" layoutY="85.0" text="Package：" />
             <TextField fx:id="author" layoutX="119.0" layoutY="48.0" prefWidth="200.0" />
             <Label layoutX="43.0" layoutY="51.0" text="Author：" />
-            <TextField fx:id="packageName" layoutX="121.0" layoutY="101.0" prefWidth="380.0" />
+            <TextField fx:id="packageName" layoutX="121.0" layoutY="85.0" prefWidth="380.0" />
             <Label layoutX="16.0" layoutY="140.0" text="SuperClass：" />
             <TextField fx:id="superClass" layoutX="120.0" layoutY="137.0" prefWidth="380.0" text="" />
             <Label layoutX="16.0" layoutY="179.0" text="ClassName：" />
@@ -62,5 +62,6 @@
         </AnchorPane>
       </content>
     </TitledPane>
+    <CheckBox fx:id="selectAllCkBox" layoutX="56.0" layoutY="141.0" mnemonicParsing="false" text="全选" />
   </children>
 </AnchorPane>

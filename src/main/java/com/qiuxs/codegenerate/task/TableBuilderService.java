@@ -54,6 +54,8 @@ public class TableBuilderService extends Service<Boolean> {
 				TableBuilderService.this.conn = DatabaseContext.getConnection(null);
 				List<TableModel> tableModels = CodeTemplateContext.getAllBuildTableModels();
 				tableModels.forEach(tm -> {
+					tm.setAuthor(ContextManager.getAuthor());
+					tm.setPackageName(ContextManager.getPackageName());
 					List<FieldModel> fieldsByTableName = TableBuilderService.this.getFieldsByTableName(tm);
 					tm.setFields(fieldsByTableName);
 					String outPutPath = ContextManager.getOutPutPath();

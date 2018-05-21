@@ -17,6 +17,8 @@ public class ContextManager {
 	private static String database;
 
 	private static String outPutPath;
+	private static String author;
+	private static String packageName;
 
 	public static Stage getPrimaryStage() {
 		return primaryStage;
@@ -66,6 +68,22 @@ public class ContextManager {
 		ContextManager.database = database;
 	}
 
+	public static String getAuthor() {
+		return author;
+	}
+
+	public static void setAuthor(String author) {
+		ContextManager.author = author;
+	}
+
+	public static String getPackageName() {
+		return packageName;
+	}
+
+	public static void setPackageName(String packageName) {
+		ContextManager.packageName = packageName;
+	}
+
 	public static void destory() {
 	}
 
@@ -75,7 +93,8 @@ public class ContextManager {
 	 * @return
 	 */
 	public static boolean isComplete() {
-		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host) && ComnUtils.isNotBlank(port);
+		return ComnUtils.isNotBlank(userName) && ComnUtils.isNotBlank(password) && ComnUtils.isNotBlank(host)
+				&& ComnUtils.isNotBlank(port);
 	}
 
 	public static void setOutPutPath(String outPutPath) {
