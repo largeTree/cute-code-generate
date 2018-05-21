@@ -18,7 +18,6 @@ public class ApplicationEntry extends Application {
 		try {
 			ContextManager.setPrimaryStage(primaryStage);
 			Parent main = FXMLLoader.load(getClass().getResource("/main.fxml"));
-			main.getStylesheets().add("/main.css");
 			primaryStage.setTitle("代码生成");
 			primaryStage.setScene(new Scene(main));
 			primaryStage.setOnCloseRequest(event -> {

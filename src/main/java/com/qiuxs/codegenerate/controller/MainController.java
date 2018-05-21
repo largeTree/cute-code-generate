@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.log4j.Logger;
 
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
 import com.qiuxs.codegenerate.context.DatabaseContext;
 import com.qiuxs.codegenerate.model.TableModel;
+import com.qiuxs.codegenerate.task.TaskExecuter;
 import com.qiuxs.codegenerate.task.TaskResult;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
@@ -19,6 +23,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -34,6 +40,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
 public class MainController implements Initializable {
+
+	private static Logger log = Logger.getLogger(MainController.class);
 
 	@FXML
 	private TextField userInput;
@@ -89,7 +97,7 @@ public class MainController implements Initializable {
 			try {
 				tablesOpt = Optional.ofNullable(DatabaseContext.getAllTablesBySchema(newVal));
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("find schemas failed", e);
 				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 			tablesOpt.ifPresent(tables -> {
@@ -109,8 +117,15 @@ public class MainController implements Initializable {
 			TableModel tableModel = CodeTemplateContext.getOrCreateTableModel(tableName);
 			// 设置为当前表模型
 			this.currentTableModel = tableModel;
+			CheckBox ckBox = (CheckBox) newVal.getChildren().get(0);
+			// 第一次单击时 如果没有勾选则自动勾选一下
+			if (ckBox.getUserData() == null && !ckBox.isSelected()) {
+				ckBox.setSelected(true);
+				// 设置一个userData，认为已经自动勾选过
+				ckBox.setUserData(new Object());
+			}
 			// 设置当前表是否需要构建
-			this.currentTableModel.setBuildFlag(((CheckBox) newVal.getChildren().get(0)).isSelected());
+			this.currentTableModel.setBuildFlag(ckBox.isSelected());
 			// 还未设置过类名的情况下，自动生成一个类名
 			if (ComnUtils.isBlank(this.currentTableModel.getClassName())) {
 				this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(tableName)));
@@ -118,6 +133,21 @@ public class MainController implements Initializable {
 			// 还未设置过包名的情况下 自动生成一个包名
 			if (ComnUtils.isBlank(this.currentTableModel.getPackageName())) {
 				this.currentTableModel.setPackageName("com." + this.author.getText() + ".");
+			}
+			Task<String> getTableDescTask = new Task<String>() {
+				@Override
+				protected String call() throws Exception {
+					String tableDesc = DatabaseContext.getTableDesc(tableName);
+					return tableDesc;
+				}
+			};
+			TaskExecuter.executeTask(getTableDescTask);
+			try {
+				String tableDesc = getTableDescTask.get();
+				this.currentTableModel.setDesc(tableDesc);
+			} catch (InterruptedException | ExecutionException e) {
+				log.error("ext=" + e.getLocalizedMessage(), e);
+				ContextManager.showAlert(e.getLocalizedMessage());
 			}
 			// 刷新控件
 			this.refreshControl();
@@ -150,7 +180,6 @@ public class MainController implements Initializable {
 		// 选择框
 		CheckBox tbCk = new CheckBox();
 		tbCk.setText("");
-		tbCk.setUserData(tableName);
 		tbCk.selectedProperty().addListener(new tableBoxChangedListener());
 		// 表名显示文字
 		Label tableNameLabel = new Label(tableName);
@@ -168,7 +197,7 @@ public class MainController implements Initializable {
 	public void connBtnClick(MouseEvent event) {
 		initDatabaseInfo();
 		if (ContextManager.isComplete()) {
-			ContextManager.showLoading();
+			this.makeLoading(this.connBtn, "Connecting...");
 			Service<TaskResult<List<String>>> connectionService = new Service<TaskResult<List<String>>>() {
 				@Override
 				protected Task<TaskResult<List<String>>> createTask() {
@@ -179,6 +208,7 @@ public class MainController implements Initializable {
 								List<String> allSchemas = DatabaseContext.getAllSchemas();
 								return TaskResult.makeSuccess(allSchemas, "成功");
 							} catch (Exception e) {
+								log.error("ext=" + e.getLocalizedMessage(), e);
 								return TaskResult.makeException(e);
 							}
 						}
@@ -187,8 +217,8 @@ public class MainController implements Initializable {
 			};
 			connectionService.start();
 			connectionService.setOnSucceeded((value) -> {
+				this.finishLoading(this.connBtn, "Connection");
 				TaskResult<List<String>> taskResult = connectionService.getValue();
-				ContextManager.hideLoading();
 				if (taskResult.isSuccessFlag()) {
 					schemaCmb.getItems().clear();
 					schemaCmb.getItems().addAll(taskResult.getData());
@@ -205,8 +235,19 @@ public class MainController implements Initializable {
 		}
 	}
 
+	private void makeLoading(Button btn, String text) {
+		btn.setText(text);
+		btn.setDisable(true);
+	}
+
+	private void finishLoading(Button btn, String text) {
+		btn.setText(text);
+		btn.setDisable(false);
+	}
+
 	private void initDatabaseInfo() {
-		DatabaseContext.clear();
+		// 初始化数据库信息的时候 先销毁原来的数据库上下文
+		DatabaseContext.destory();
 		String userName = this.userInput.getText();
 		String password = this.passInput.getText();
 		String host = this.hostInput.getText();
@@ -223,7 +264,13 @@ public class MainController implements Initializable {
 			return;
 		}
 		this.refreshTableModel();
-		ContextManager.startBuilder();
+		this.makeLoading(this.buildBtn, "Building...");
+		TaskExecuter.startBuilder(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				MainController.this.finishLoading(MainController.this.buildBtn, "Begin Build");
+			}
+		});
 	}
 
 	@FXML
@@ -285,6 +332,5 @@ public class MainController implements Initializable {
 			}
 			MainController.this.currentTableModel.setBuildFlag(newValue);
 		}
-
 	}
 }

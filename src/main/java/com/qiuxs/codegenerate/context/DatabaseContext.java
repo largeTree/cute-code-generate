@@ -2,6 +2,7 @@ package com.qiuxs.codegenerate.context;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,11 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
+
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 public class DatabaseContext {
+
+	private static Logger log = Logger.getLogger(DatabaseContext.class);
+
 	private static final String SELECT_SCHEMA_SQL = "SELECT SCHEMA_NAME FROM `SCHEMATA` WHERE SCHEMA_NAME NOT IN ('information_schema','performance_schema','sys','mysql')";
 	private static final String SELECT_TABLES_CURRENT_SCHEMA = "SELECT table_name FROM information_schema.`TABLES` WHERE TABLE_SCHEMA = DATABASE()";
+	private static String GET_TABLE_DESC = "SELECT TABLE_COMMENT FROM information_schema.`TABLES` WHERE table_name = ? AND TABLE_SCHEMA = DATABASE()";
+
 	private static Optional<Connection> conn = Optional.empty();
 	private static String currentSchema = null;
 
@@ -31,7 +39,7 @@ public class DatabaseContext {
 					allSchema.add(r.getString(1));
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("find schemas failed", e);
 			}
 		});
 		return allSchema;
@@ -41,16 +49,24 @@ public class DatabaseContext {
 		currentSchema = schema;
 		Connection conn = getConnection(schema);
 		List<String> tableNames = new ArrayList<>();
-		try {
-			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery(SELECT_TABLES_CURRENT_SCHEMA);
-			while (rs.next()) {
-				tableNames.add(rs.getString(1));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		Statement statement = conn.createStatement();
+		ResultSet rs = statement.executeQuery(SELECT_TABLES_CURRENT_SCHEMA);
+		while (rs.next()) {
+			tableNames.add(rs.getString(1));
 		}
 		return tableNames;
+	}
+
+	public static String getTableDesc(String tableName) throws SQLException {
+		Connection conn = getConnection(null);
+		PreparedStatement statement = conn.prepareStatement(GET_TABLE_DESC);
+		statement.setString(1, tableName);
+		ResultSet rs = statement.executeQuery();
+		String tableComment = tableName;
+		if (rs.next()) {
+			tableComment = rs.getString(1);
+		}
+		return tableComment;
 	}
 
 	/**
@@ -87,18 +103,22 @@ public class DatabaseContext {
 	public static Optional<Connection> newConnection(String schema) throws SQLException {
 		currentSchema = schema;
 		String url = "jdbc:mysql://" + ContextManager.getHost() + ":" + ContextManager.getPort() + "/" + currentSchema;
-		return Optional.ofNullable(
-				DriverManager.getConnection(url, ContextManager.getUserName(), ContextManager.getPassword()));
+		log.info("connect to url : " + url);
+		return Optional.ofNullable(DriverManager.getConnection(url, ContextManager.getUserName(), ContextManager.getPassword()));
 	}
 
 	public static void destory() {
-		conn.ifPresent(c -> {
+		conn.ifPresent(con -> {
 			try {
-				c.close();
+				if (!con.isClosed()) {
+					con.close();
+				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				log.error("ext=" + e.getLocalizedMessage(), e);
 			}
 		});
+		conn = Optional.empty();
+		currentSchema = null;
 	}
 
 	public static void close(Optional<? extends AutoCloseable> closeable) {
@@ -106,27 +126,13 @@ public class DatabaseContext {
 			try {
 				cls.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("ext=" + e.getLocalizedMessage(), e);
 			}
 		});
 	}
 
 	public static String getCurrentSchame() {
 		return currentSchema;
-	}
-
-	public static void clear() {
-		conn.ifPresent(con -> {
-			try {
-				if (!con.isClosed()) {
-					con.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-		conn = Optional.empty();
-		currentSchema = null;
 	}
 
 }

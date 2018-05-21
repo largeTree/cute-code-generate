@@ -1,4 +1,4 @@
-package com.qiuxs.codegenerate;
+package com.qiuxs.codegenerate.task;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,7 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
 
 import com.qiuxs.codegenerate.context.CodeTemplateContext;
 import com.qiuxs.codegenerate.context.ContextManager;
@@ -19,7 +20,6 @@ import com.qiuxs.codegenerate.model.FieldModel;
 import com.qiuxs.codegenerate.model.TableModel;
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
-import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -27,6 +27,8 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 public class TableBuilderService extends Service<Boolean> {
+
+	private static Logger log = Logger.getLogger(TableBuilderService.class);
 
 	private static final String COLUMNS_SQL = "SELECT COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,COLUMN_KEY FROM information_schema.`COLUMNS` WHERE TABLE_NAME = ? AND TABLE_SCHEMA = DATABASE()";
 
@@ -36,11 +38,12 @@ public class TableBuilderService extends Service<Boolean> {
 
 	public TableBuilderService() {
 		this.conf = new Configuration(Configuration.VERSION_2_3_25);
-		try {
-			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
+			this.conf.setClassForTemplateLoading(getClass(), "/templates");
+//		} catch (IOException e) {
+//			log.error("set templateLoader error ext=" + e.getLocalizedMessage(), e);
+//		}
 	}
 
 	@Override
@@ -80,12 +83,12 @@ public class TableBuilderService extends Service<Boolean> {
 							controllerOut = builderWriter(outPutPath, tm, "controller", "java");
 							TableBuilderService.this.outPut("controller", controllerOut, tm);
 						}
-						TimeUnit.MICROSECONDS.sleep(500);
-					} catch (IOException | TemplateException | InterruptedException e) {
-						e.printStackTrace();
+					} catch (IOException | TemplateException e) {
+						log.error("build error ext=" + e.getLocalizedMessage(), e);
 					} finally {
 						close(entityOut);
 						close(daoOut);
+						close(mapperOut);
 						close(serviceOut);
 						close(controllerOut);
 					}
@@ -123,7 +126,7 @@ public class TableBuilderService extends Service<Boolean> {
 			try {
 				closeable.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("ext=" + e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -145,7 +148,7 @@ public class TableBuilderService extends Service<Boolean> {
 				fields.add(field);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("ext=" + e.getLocalizedMessage(), e);
 		}
 		return fields;
 	}
