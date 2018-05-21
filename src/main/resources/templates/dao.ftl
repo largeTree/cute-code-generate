@@ -2,7 +2,7 @@ package ${packageName}.dao;
 
 import org.springframework.stereotype.Repository;
 
-import com.qiuxs.frm.persistent.dao.IBaseDao;
+import com.qiuxs.cuteframework.core.persistent.dao.IBaseDao;
 import ${packageName}.entity.${className};
 
 /**

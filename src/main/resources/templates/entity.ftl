@@ -9,7 +9,7 @@ import ${importClass};
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
-import com.qiuxs.frm.persistent.entiry.AbstractEntity;
+import com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity;
 
 /**
  * ${desc!}实体类

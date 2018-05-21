@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import com.qiuxs.frm.persistent.service.AbstractDataService;
+import com.qiuxs.cuteframework.core.persistent.service.AbstractDataService;
 import ${packageName}.dao.UserDao;
 import ${packageName}.entity.User;
 

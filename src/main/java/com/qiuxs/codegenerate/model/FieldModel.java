@@ -54,6 +54,7 @@ public class FieldModel {
 		case "char":
 			javaType = Character.class.getSimpleName();
 			break;
+		case "enum":
 		case "int":
 		case "tinyint":
 			javaType = Integer.class.getSimpleName();

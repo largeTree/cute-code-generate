@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.qiuxs.frm.web.controller.AbstractDataController;
+import com.qiuxs.cuteframework.web.controller.AbstractDataController;
 import ${packageName}.dao.${className}Dao;
 import ${packageName}.entity.${className};
 import ${packageName}.service.${className}Service;
