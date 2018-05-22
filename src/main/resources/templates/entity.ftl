@@ -14,7 +14,8 @@ import ${superClass};
  * @author ${author!}
  *
  */
-public class ${className} extends ${superClass}<${pkClass}> {
+
+public class ${className} extends ${simpleSuperClass}<${pkClass}> {
 
 	<#list fields as field>
 	/** ${field.comment!} */
@@ -40,5 +41,4 @@ public class ${className} extends ${superClass}<${pkClass}> {
 	}
 
 	</#list>
-
 }

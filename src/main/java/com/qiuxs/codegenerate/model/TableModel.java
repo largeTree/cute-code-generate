@@ -14,6 +14,7 @@ public class TableModel {
 	private String packageName;
 	private String pkClass;
 	private String superClass = "com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity";
+	private String simpleSuperClass;
 	private String className;
 	private String desc;
 	private boolean entity = true;
@@ -75,6 +76,8 @@ public class TableModel {
 
 	public void setSuperClass(String superClass) {
 		this.superClass = superClass;
+		String[] split = this.superClass.split("\\.");
+		this.setSimpleSuperClass(split[split.length - 1]);
 	}
 
 	public String getClassName() {
@@ -176,6 +179,14 @@ public class TableModel {
 
 	public void setHasError(boolean hasError) {
 		this.hasError = hasError;
+	}
+
+	public String getSimpleSuperClass() {
+		return simpleSuperClass;
+	}
+
+	public void setSimpleSuperClass(String simpleSuperClass) {
+		this.simpleSuperClass = simpleSuperClass;
 	}
 
 }
