@@ -28,7 +28,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -117,20 +116,34 @@ public class MainController implements Initializable {
 
 		// 选择表
 		this.tableList.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-			MainController.this.selectTableEvent(newVal);
+			MainController.this.selectTableEvent(newVal, false);
 		});
 
 		// 全选按钮
 		this.selectAllCkBox.selectedProperty().addListener((ovservable, oldVal, newVal) -> {
 			ObservableList<Pane> items = this.tableList.getItems();
 			if (newVal) {
+				String currentTableName = null;
+				if (this.currentTableModel != null) {
+					currentTableName = this.currentTableModel.getTableName();
+				}
+				Pane currentSelectedPane = null;
 				// 全选
-				items.forEach(pane -> {
-					this.selectTableEvent(pane);
-				});
+				if (items.size() > 0) {
+					for (Pane pane : items) {
+						this.selectTableEvent(pane, true);
+						if (pane.getUserData().equals(currentTableName)) {
+							currentSelectedPane = pane;
+						}
+					}
+				}
+				// 重新选中之前按选的表
+				if (currentSelectedPane != null) {
+					this.selectTableEvent(currentSelectedPane, true);
+				}
 			} else {
 				// 全不选
-				items.forEach(pane->{
+				items.forEach(pane -> {
 					// 获取表名
 					String tableName = pane.getUserData().toString();
 					// 获取表模型
@@ -161,12 +174,12 @@ public class MainController implements Initializable {
 		// 默认作者
 		this.author.setText(System.getProperty("user.name"));
 		// 包名
-		this.packageName.setText("com." + this.author.getText() + ".");
+		this.packageName.setText("com." + this.author.getText() + ".biz");
 		// 初始化数据库信息
 		initDatabaseInfo();
 	}
 
-	private void selectTableEvent(Pane pane) {
+	private void selectTableEvent(Pane pane, boolean forceSelect) {
 		// 将控件的值刷新到模型中
 		this.refreshTableModel();
 		// 获取表名
@@ -177,7 +190,7 @@ public class MainController implements Initializable {
 		this.currentTableModel = tableModel;
 		CheckBox ckBox = (CheckBox) pane.getChildren().get(0);
 		// 第一次单击时 如果没有勾选则自动勾选一下
-		if (ckBox.getUserData() == null && !ckBox.isSelected()) {
+		if (forceSelect || ckBox.getUserData() == null && !ckBox.isSelected()) {
 			ckBox.setSelected(true);
 			// 设置一个userData，认为已经自动勾选过
 			ckBox.setUserData(new Object());
@@ -295,8 +308,6 @@ public class MainController implements Initializable {
 		if (ContextManager.isComplete() && ComnUtils.isBlank(DatabaseContext.getCurrentSchame())) {
 			return;
 		}
-		ContextManager.setAuthor(this.author.getText());
-		ContextManager.setPackageName(this.packageName.getText());
 		this.refreshTableModel();
 		this.makeLoading(this.buildBtn, "Building...");
 		TaskExecuter.startBuilder(new EventHandler<WorkerStateEvent>() {
@@ -322,6 +333,10 @@ public class MainController implements Initializable {
 		if (authorName != null) {
 			this.author.setText(authorName);
 		}
+		String packName = this.currentTableModel.getPackageName();
+		if (ComnUtils.isNotBlank(packName)) {
+			this.packageName.setText(packName);
+		}
 		this.setDisableFlag(!this.currentTableModel.isBuildFlag());
 		this.superClass.setText(this.currentTableModel.getSuperClass());
 		this.className.setText(this.currentTableModel.getClassName());
@@ -337,6 +352,8 @@ public class MainController implements Initializable {
 		if (this.currentTableModel == null) {
 			return;
 		}
+		this.currentTableModel.setAuthor(this.author.getText());
+		this.currentTableModel.setPackageName(this.packageName.getText());
 		this.currentTableModel.setSuperClass(this.superClass.getText());
 		this.currentTableModel.setClassName(this.className.getText());
 		this.currentTableModel.setDesc(this.desc.getText());

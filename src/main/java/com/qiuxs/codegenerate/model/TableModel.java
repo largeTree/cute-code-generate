@@ -13,7 +13,7 @@ public class TableModel {
 	private String tableName;
 	private String packageName;
 	private String pkClass;
-	private String superClass = "com.qiuxs.frm.persistent.entiry.AbstractEntity";
+	private String superClass = "com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity";
 	private String className;
 	private String desc;
 	private boolean entity = true;
@@ -21,6 +21,9 @@ public class TableModel {
 	private boolean mapper = true;
 	private boolean service = true;
 	private boolean controller = true;
+
+	private boolean hasError = false;
+	private Set<String> unkonwTypes = new HashSet<>();
 
 	private List<FieldModel> fields;
 
@@ -137,6 +140,11 @@ public class TableModel {
 	public void setFields(List<FieldModel> fields) {
 		this.fields = fields;
 		this.fields.forEach(field -> {
+			if (field.getJavaType() == null) {
+				this.unkonwTypes.add(field.getColumnName());
+				hasError = true;
+				return;
+			}
 			if (Date.class.getSimpleName().equals(field.getJavaType())) {
 				this.importClasses.add(Date.class.getName() + ";");
 			}
@@ -152,6 +160,22 @@ public class TableModel {
 
 	public void setImportClasses(Set<String> importClasses) {
 		this.importClasses = importClasses;
+	}
+
+	public Set<String> getUnkonwTypes() {
+		return unkonwTypes;
+	}
+
+	public void setUnkonwTypes(Set<String> unkonwTypes) {
+		this.unkonwTypes = unkonwTypes;
+	}
+
+	public boolean isHasError() {
+		return hasError;
+	}
+
+	public void setHasError(boolean hasError) {
+		this.hasError = hasError;
 	}
 
 }

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -38,12 +39,12 @@ public class TableBuilderService extends Service<Boolean> {
 
 	public TableBuilderService() {
 		this.conf = new Configuration(Configuration.VERSION_2_3_25);
-//		try {
-//			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
-			this.conf.setClassForTemplateLoading(getClass(), "/templates");
-//		} catch (IOException e) {
-//			log.error("set templateLoader error ext=" + e.getLocalizedMessage(), e);
-//		}
+		//		try {
+		//			this.conf.setTemplateLoader(new FileTemplateLoader(new File(this.getClass().getResource("/templates").getFile())));
+		this.conf.setClassForTemplateLoading(getClass(), "/templates");
+		//		} catch (IOException e) {
+		//			log.error("set templateLoader error ext=" + e.getLocalizedMessage(), e);
+		//		}
 	}
 
 	@Override
@@ -54,10 +55,18 @@ public class TableBuilderService extends Service<Boolean> {
 				TableBuilderService.this.conn = DatabaseContext.getConnection(null);
 				List<TableModel> tableModels = CodeTemplateContext.getAllBuildTableModels();
 				tableModels.forEach(tm -> {
-					tm.setAuthor(ContextManager.getAuthor());
-					tm.setPackageName(ContextManager.getPackageName());
 					List<FieldModel> fieldsByTableName = TableBuilderService.this.getFieldsByTableName(tm);
 					tm.setFields(fieldsByTableName);
+					if (tm.isHasError()) {
+						Set<String> unkonwTypes = tm.getUnkonwTypes();
+						StringBuilder sb = new StringBuilder();
+						unkonwTypes.forEach(fieldName -> {
+							sb.append(fieldName).append(",");
+						});
+						log.warn("table[" + tm.getTableName() + "],pkClass=[" + tm.getPkClass() + "],unkonwTypeFields [" + sb.toString() + "]");
+						return;
+					}
+
 					String outPutPath = ContextManager.getOutPutPath();
 					Writer entityOut = null;
 					Writer daoOut = null;
@@ -148,6 +157,9 @@ public class TableBuilderService extends Service<Boolean> {
 					tm.setPkClass(field.getJavaType());
 				}
 				fields.add(field);
+			}
+			if (tm.getPkClass() == null) {
+				tm.setHasError(true);
 			}
 		} catch (SQLException e) {
 			log.error("ext=" + e.getLocalizedMessage(), e);

@@ -51,10 +51,8 @@ public class FieldModel {
 	private String getJavaType(String dbType) {
 		String javaType = null;
 		switch (dbType) {
-		case "char":
-			javaType = Character.class.getSimpleName();
-			break;
 		case "enum":
+		case "smallint":
 		case "int":
 		case "tinyint":
 			javaType = Integer.class.getSimpleName();
@@ -63,8 +61,10 @@ public class FieldModel {
 			javaType = Long.class.getSimpleName();
 			break;
 		case "varchar":
+		case "char":
 		case "json":
 		case "text":
+		case "longtext":
 			javaType = String.class.getSimpleName();
 			break;
 		case "decimal":
@@ -72,6 +72,7 @@ public class FieldModel {
 			break;
 		case "date":
 		case "datetime":
+		case "timestamp":
 			javaType = Date.class.getSimpleName();
 			break;
 		}

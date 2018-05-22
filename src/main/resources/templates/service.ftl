@@ -2,6 +2,11 @@ package ${packageName}.service;
 
 import java.util.List;
 import javax.annotation.Resource;
+<#if importClasses??>
+<#list importClasses as importClass>
+import ${importClass}
+</#list>
+</#if>
 
 import org.springframework.stereotype.Service;
 
@@ -39,7 +44,7 @@ public class ${className}Service extends AbstractDataService<${pkClass}, ${class
 		PropertyWrapper<?> prop = null;
 
 		<#list fields as field>
-		prop = new PropertyWrapper<>(new BaseField("${field.name}", "${field.comment!field.name}", "${field.javaType}"), null);
+		prop = new PropertyWrapper<${field.javaType}>(new BaseField("${field.name}", "${field.comment!field.name}", "${field.javaType}"), null);
 		props.add(prop);
 
 		</#list>

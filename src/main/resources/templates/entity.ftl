@@ -6,7 +6,7 @@ import ${importClass}
 </#list>
 </#if>
 
-import com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity;
+import ${superClass};
 
 /**
  * ${desc!}实体类
@@ -14,7 +14,7 @@ import com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity;
  * @author ${author!}
  *
  */
-public class ${className} extends AbstractEntity<${pkClass}> {
+public class ${className} extends ${superClass}<${pkClass}> {
 
 	<#list fields as field>
 	/** ${field.comment!} */
