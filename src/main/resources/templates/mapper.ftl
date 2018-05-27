@@ -61,7 +61,7 @@
 		)
 	</insert>
 
-	<insert id="insertBatch" parameterType="java.utils.List" >
+	<insert id="insertBatch" parameterType="java.util.List" >
 		insert into ${tableName}(<include refid="insertFields" />)
 		values
 		<foreach collection="list" item="item" separator="," >
