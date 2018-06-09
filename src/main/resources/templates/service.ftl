@@ -32,11 +32,16 @@ public class ${className}Service extends AbstractDataService<${pkClass}, ${class
 	}
 
 	@Resource
-	private ${className}Dao ${className?lower_case}Dao;
+	private ${className}Dao ${className?uncap_first}Dao;
 
 	@Override
 	protected ${className}Dao getDao() {
-		return this.${className?lower_case}Dao;
+		return this.${className?uncap_first}Dao;
+	}
+
+	@Override
+	protected void initServiceFilters(List<IServiceFilter<${pkClass}, ${className}>> serviceFilters) {
+		serviceFilters.add(new IdGenerateFilter<>(TABLE_NAME));
 	}
 
 	@Override

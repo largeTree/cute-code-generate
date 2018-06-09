@@ -18,12 +18,15 @@ import ${superClass};
 public class ${className} extends ${simpleSuperClass}<${pkClass}> {
 
 	<#list fields as field>
+	<#if !field.ignoreEntity>
 	/** ${field.comment!} */
 	private ${field.javaType} ${field.name};
 
+	</#if>
 	</#list>
 
 	<#list fields as field>
+	<#if !field.ignoreEntity>
 	/**
 	 * get the ${field.comment!field.name}
 	 * @return ${field.name}
@@ -40,5 +43,6 @@ public class ${className} extends ${simpleSuperClass}<${pkClass}> {
 		this.${field.name} = ${field.name};
 	}
 
+	</#if>
 	</#list>
 }

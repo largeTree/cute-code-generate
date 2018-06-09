@@ -14,7 +14,7 @@ public class TableModel {
 	private String packageName;
 	private String pkClass;
 	private String superClass = "com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity";
-	private String simpleSuperClass;
+	private String simpleSuperClass = "AbstractEntity";
 	private String className;
 	private String desc;
 	private boolean entity = true;
