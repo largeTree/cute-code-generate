@@ -10,9 +10,11 @@ import ${importClass}
 
 import org.springframework.stereotype.Service;
 
-import com.qiuxs.cuteframework.core.persistent.modal.PropertyWrapper;
-import com.qiuxs.cuteframework.core.persistent.modal.BaseField;
-import com.qiuxs.cuteframework.core.persistent.service.AbstractDataService;
+import com.qiuxs.cuteframework.core.persistent.database.modal.PropertyWrapper;
+import com.qiuxs.cuteframework.core.persistent.database.modal.BaseField;
+import com.qiuxs.cuteframework.core.persistent.database.service.AbstractDataService;
+import com.qiuxs.cuteframework.core.persistent.database.service.filter.IServiceFilter;
+import com.qiuxs.cuteframework.core.persistent.database.service.filter.impl.IdGenerateFilter;
 import ${packageName}.dao.${className}Dao;
 import ${packageName}.entity.${className};
 
@@ -49,7 +51,7 @@ public class ${className}Service extends AbstractDataService<${pkClass}, ${class
 		PropertyWrapper<?> prop = null;
 
 		<#list fields as field>
-		prop = new PropertyWrapper<${field.javaType}>(new BaseField("${field.name}", "${field.comment!field.name}", "${field.javaType}"), null);
+		prop = new PropertyWrapper<${field.javaType}>(new BaseField("${field.name}", "${field.comment!field.name}", ${field.javaType}.class), null);
 		props.add(prop);
 
 		</#list>

@@ -40,24 +40,26 @@
         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <children>
             <Label layoutX="10.0" layoutY="12.0" text="OutPutPath：" />
-            <Separator layoutX="0.0" layoutY="124.0" prefWidth="550.0" />
+            <Separator layoutX="0.0" layoutY="158.0" prefWidth="550.0" />
             <TextField fx:id="outPutPathInput" editable="false" layoutX="118.0" layoutY="9.0" prefWidth="200.0" />
             <Button fx:id="outPutPathChooserBtn" layoutX="335.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#outPutPathBtnClick" text="选择" />
             <Label layoutX="34.0" layoutY="85.0" text="Package：" />
-            <TextField fx:id="author" layoutX="119.0" layoutY="48.0" prefWidth="200.0" />
+            <TextField fx:id="author" layoutX="118.0" layoutY="48.0" prefWidth="200.0" />
             <Label layoutX="43.0" layoutY="51.0" text="Author：" />
-            <TextField fx:id="packageName" layoutX="121.0" layoutY="85.0" prefWidth="380.0" />
-            <Label layoutX="16.0" layoutY="140.0" text="SuperClass：" />
-            <TextField fx:id="superClass" layoutX="120.0" layoutY="137.0" prefWidth="380.0" text="" />
-            <Label layoutX="16.0" layoutY="179.0" text="ClassName：" />
-            <TextField fx:id="className" layoutX="120.0" layoutY="175.0" prefWidth="380.0" />
-            <Label layoutX="61.0" layoutY="218.0" text="Desc：" />
-            <TextField fx:id="desc" layoutX="120.0" layoutY="215.0" prefWidth="380.0" />
-            <CheckBox fx:id="entityCkBox" layoutX="121.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Entity" />
-            <CheckBox fx:id="daoCkBox" layoutX="208.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Dao" />
-            <CheckBox fx:id="mapperCkBox" layoutX="286.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Mapper" />
-            <CheckBox fx:id="serviceCkBox" layoutX="379.0" layoutY="260.0" mnemonicParsing="false" selected="false" text="Service" />
-            <CheckBox fx:id="controllerCkBox" layoutX="121.0" layoutY="303.0" mnemonicParsing="false" selected="false" text="Cntroller" />
+            <TextField fx:id="packageName" layoutX="118.0" layoutY="85.0" prefWidth="380.0" />
+            <Label layoutX="52.0" layoutY="123.0" text="Prefix：" />
+            <TextField fx:id="prefix" layoutX="118.0" layoutY="123.0" prefWidth="380.0" />
+            <Label layoutX="14.0" layoutY="184.0" text="SuperClass：" />
+            <TextField fx:id="superClass" layoutX="118.0" layoutY="181.0" prefWidth="380.0" text="" />
+            <Label layoutX="14.0" layoutY="223.0" text="ClassName：" />
+            <TextField fx:id="className" layoutX="118.0" layoutY="219.0" prefWidth="380.0" />
+            <Label layoutX="59.0" layoutY="262.0" text="Desc：" />
+            <TextField fx:id="desc" layoutX="118.0" layoutY="259.0" prefWidth="380.0" />
+            <CheckBox fx:id="entityCkBox" layoutX="119.0" layoutY="303.0" mnemonicParsing="false" selected="false" text="Entity" />
+            <CheckBox fx:id="daoCkBox" layoutX="206.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Dao" />
+            <CheckBox fx:id="mapperCkBox" layoutX="284.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Mapper" />
+            <CheckBox fx:id="serviceCkBox" layoutX="377.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Service" />
+            <CheckBox fx:id="controllerCkBox" layoutX="119.0" layoutY="345.0" mnemonicParsing="false" selected="false" text="Cntroller" />
           </children>
         </AnchorPane>
       </content>

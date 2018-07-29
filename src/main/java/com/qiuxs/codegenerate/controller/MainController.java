@@ -74,6 +74,8 @@ public class MainController implements Initializable {
 	@FXML
 	private TextField packageName;
 	@FXML
+	private TextField prefix;
+	@FXML
 	private TextField superClass;
 	@FXML
 	private TextField className;
@@ -197,25 +199,31 @@ public class MainController implements Initializable {
 		}
 		// 设置当前表是否需要构建
 		this.currentTableModel.setBuildFlag(ckBox.isSelected());
+		// 设置一下前缀
+		if (ComnUtils.isBlank(this.currentTableModel.getPrefix())) {
+			this.currentTableModel.setPrefix(this.prefix.getText());
+		}
 		// 还未设置过类名的情况下，自动生成一个类名
 		if (ComnUtils.isBlank(this.currentTableModel.getClassName())) {
-			this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(tableName)));
+			this.currentTableModel.setClassName(ComnUtils.firstToUpperCase(ComnUtils.formatName(tableName, this.currentTableModel.getPrefix())));
 		}
-
-		Task<String> getTableDescTask = new Task<String>() {
-			@Override
-			protected String call() throws Exception {
-				String tableDesc = DatabaseContext.getTableDesc(tableName);
-				return tableDesc;
+		// 表描述信息为空时，自动获取一下数据库的备注
+		if (ComnUtils.isBlank(tableModel.getDesc())) {
+			Task<String> getTableDescTask = new Task<String>() {
+				@Override
+				protected String call() throws Exception {
+					String tableDesc = DatabaseContext.getTableDesc(tableName);
+					return tableDesc;
+				}
+			};
+			TaskExecuter.executeTask(getTableDescTask);
+			try {
+				String tableDesc = getTableDescTask.get();
+				this.currentTableModel.setDesc(tableDesc);
+			} catch (InterruptedException | ExecutionException e) {
+				log.error("ext=" + e.getLocalizedMessage(), e);
+				ContextManager.showAlert(e.getLocalizedMessage());
 			}
-		};
-		TaskExecuter.executeTask(getTableDescTask);
-		try {
-			String tableDesc = getTableDescTask.get();
-			this.currentTableModel.setDesc(tableDesc);
-		} catch (InterruptedException | ExecutionException e) {
-			log.error("ext=" + e.getLocalizedMessage(), e);
-			ContextManager.showAlert(e.getLocalizedMessage());
 		}
 		// 刷新控件
 		this.refreshControl();
@@ -337,6 +345,10 @@ public class MainController implements Initializable {
 		if (ComnUtils.isNotBlank(packName)) {
 			this.packageName.setText(packName);
 		}
+		String sPrefix = this.currentTableModel.getPrefix();
+		if (ComnUtils.isNotBlank(sPrefix)) {
+			this.prefix.setText(sPrefix);
+		}
 		this.setDisableFlag(!this.currentTableModel.isBuildFlag());
 		this.superClass.setText(this.currentTableModel.getSuperClass());
 		this.className.setText(this.currentTableModel.getClassName());
@@ -354,6 +366,7 @@ public class MainController implements Initializable {
 		}
 		this.currentTableModel.setAuthor(this.author.getText());
 		this.currentTableModel.setPackageName(this.packageName.getText());
+		this.currentTableModel.setPrefix(this.prefix.getText());
 		this.currentTableModel.setSuperClass(this.superClass.getText());
 		this.currentTableModel.setClassName(this.className.getText());
 		this.currentTableModel.setDesc(this.desc.getText());

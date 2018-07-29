@@ -29,7 +29,7 @@ public class FieldModel {
 
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
-		this.setName(ComnUtils.formatName(columnName));
+		this.setName(ComnUtils.formatName(columnName, null));
 	}
 
 	public String getName() {

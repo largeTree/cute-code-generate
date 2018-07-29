@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,15 @@ public class TableBuilderService extends Service<Boolean> {
 
 	private static final String COLUMNS_SQL = "SELECT COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,COLUMN_KEY FROM information_schema.`COLUMNS` WHERE TABLE_NAME = ? AND TABLE_SCHEMA = DATABASE()";
 
+	private static Set<String> IN_SUPER_CLASS_FIELDS = new HashSet<>();
+	static {
+		IN_SUPER_CLASS_FIELDS.add("id");
+		IN_SUPER_CLASS_FIELDS.add("createdBy");
+		IN_SUPER_CLASS_FIELDS.add("createdTime");
+		IN_SUPER_CLASS_FIELDS.add("updatedBy");
+		IN_SUPER_CLASS_FIELDS.add("updatedTime");
+	}
+	
 	private Connection conn;
 
 	private Configuration conf;
@@ -156,7 +166,9 @@ public class TableBuilderService extends Service<Boolean> {
 				if ("pri".equalsIgnoreCase(rs.getString(4))) {
 					tm.setPkClass(field.getJavaType());
 				}
-				fields.add(field);
+				if (!IN_SUPER_CLASS_FIELDS.contains(field.getName())) {
+					fields.add(field);
+				}
 			}
 			if (tm.getPkClass() == null) {
 				tm.setHasError(true);

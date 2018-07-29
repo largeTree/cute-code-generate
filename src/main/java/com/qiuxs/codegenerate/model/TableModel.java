@@ -12,8 +12,9 @@ public class TableModel {
 	private String author;
 	private String tableName;
 	private String packageName;
+	private String prefix;
 	private String pkClass;
-	private String superClass = "com.qiuxs.cuteframework.core.persistent.entity.impl.AbstractEntity";
+	private String superClass = "com.qiuxs.cuteframework.core.persistent.database.entity.impl.AbstractEntity";
 	private String simpleSuperClass = "AbstractEntity";
 	private String className;
 	private String desc;
@@ -60,6 +61,14 @@ public class TableModel {
 
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	public String getPkClass() {

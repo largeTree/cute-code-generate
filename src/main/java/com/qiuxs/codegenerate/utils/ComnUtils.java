@@ -9,8 +9,11 @@ public class ComnUtils {
 		return !isBlank(str);
 	}
 
-	public static String formatName(String columnName) {
-		String[] names = columnName.split("_");
+	public static String formatName(String src, String prefix) {
+		if (ComnUtils.isNotBlank(prefix) && src.startsWith(prefix)) {
+			src = src.substring(prefix.length() - 1, src.length());
+		}
+		String[] names = src.split("_");
 		StringBuilder sb = new StringBuilder();
 		sb.append(names[0]);
 		for (int i = 1; i < names.length; i++) {
