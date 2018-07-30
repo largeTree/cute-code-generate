@@ -2,26 +2,16 @@ package com.qiuxs.codegenerate.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.qiuxs.codegenerate.utils.ComnUtils;
 
 public class FieldModel {
 
-	private static final Set<String> IGNORE_ENTITY_FIELDS = new HashSet<>();
-	static {
-		IGNORE_ENTITY_FIELDS.add("id");
-		IGNORE_ENTITY_FIELDS.add("createdBy");
-		IGNORE_ENTITY_FIELDS.add("createdTime");
-		IGNORE_ENTITY_FIELDS.add("updatedBy");
-		IGNORE_ENTITY_FIELDS.add("updatedTime");
-	}
-
 	private String columnName;
 	private String name;
 	private String javaType;
 	private String comment;
+	private boolean ignoreEntity;
 
 	public String getColumnName() {
 		return columnName;
@@ -60,7 +50,11 @@ public class FieldModel {
 	}
 
 	public boolean isIgnoreEntity() {
-		return IGNORE_ENTITY_FIELDS.contains(name);
+		return ignoreEntity;
+	}
+
+	public void setIgnoreEntity(boolean ignoreEntity) {
+		this.ignoreEntity = ignoreEntity;
 	}
 
 	private String getJavaType(String dbType) {

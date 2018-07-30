@@ -10,7 +10,7 @@ import com.qiuxs.cuteframework.web.controller.AbstractDataController;
 
 import ${packageName}.dao.${className}Dao;
 import ${packageName}.entity.${className};
-import ${packageName}.service.${className}Service;
+import ${packageName}.service.I${className}Service;
 
 /**
  * ${desc!}控制器
@@ -20,13 +20,13 @@ import ${packageName}.service.${className}Service;
  */
 @RestController
 @RequestMapping(value = "/api/${className?lower_case}", produces = WebConstants.DEFAULT_REQUEST_PRODUCES)
-public class ${className}Controller extends AbstractDataController<${pkClass}, ${className}, ${className}Dao, ${className}Service> {
+public class ${className}Controller extends AbstractDataController<${pkClass}, ${className}, ${className}Dao, I${className}Service> {
 
 	@Resource
-	private ${className}Service ${className?lower_case}Service;
+	private I${className}Service ${className?lower_case}Service;
 
 	@Override
-	protected ${className}Service getService() {
+	protected I${className}Service getService() {
 		return this.${className?lower_case}Service;
 	}
 

@@ -1,4 +1,4 @@
-package ${packageName}.service;
+package ${packageName}.service.impl;
 
 import java.util.List;
 import javax.annotation.Resource;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.qiuxs.cuteframework.core.persistent.database.modal.PropertyWrapper;
 import com.qiuxs.cuteframework.core.persistent.database.modal.BaseField;
-import com.qiuxs.cuteframework.core.persistent.database.service.AbstractDataService;
+import com.qiuxs.cuteframework.core.persistent.database.service.AbstractDataPropertyService;
 import com.qiuxs.cuteframework.core.persistent.database.service.filter.IServiceFilter;
 import com.qiuxs.cuteframework.core.persistent.database.service.filter.impl.IdGenerateFilter;
 import ${packageName}.dao.${className}Dao;
 import ${packageName}.entity.${className};
-
+import ${packageName}.service.I${className}Service;
 /**
  * ${desc!}服务类
  *
@@ -25,7 +25,7 @@ import ${packageName}.entity.${className};
  *
  */
 @Service
-public class ${className}Service extends AbstractDataService<${pkClass}, ${className}, ${className}Dao> {
+public class ${className}Service extends AbstractDataPropertyService<${pkClass}, ${className}, ${className}Dao> implements I${className}Service {
 
 	private static final String TABLE_NAME = "${tableName}";
 
