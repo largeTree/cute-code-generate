@@ -19,7 +19,7 @@ import ${packageName}.service.I${className}Service;
  *
  */
 @RestController
-@RequestMapping(value = "/api/${className?lower_case}", produces = WebConstants.DEFAULT_REQUEST_PRODUCES)
+@RequestMapping(value = WebConstants.DEFAULT_API_PREFIX + "/${className?lower_case}", produces = WebConstants.DEFAULT_REQUEST_PRODUCES)
 public class ${className}Controller extends AbstractDataController<${pkClass}, ${className}, ${className}Dao, I${className}Service> {
 
 	@Resource

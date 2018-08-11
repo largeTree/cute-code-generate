@@ -74,14 +74,16 @@
 	</insert>
 
 	<update id="update" parameterType="${packageName}.entity.${className}" >
-		update ${tableName} <include refid="setComn" /> where id = ${r'#{id}'}
+		update ${tableName} set <include refid="setComn" /> where id = ${r'#{id}'}
 	</update>
 
 	<sql id="setComn" >
 	<#list fields as field>
+		<#if field.columnName != 'id'>
 		<if test="${field.name} != null" >
 			${field.columnName} = ${r'#{'}${field.name}${r'}'}<#if field_index &lt; fields?size - 1>,</#if>
 		</if>
+		</#if>
 	</#list>
 	</sql>
 </mapper>
