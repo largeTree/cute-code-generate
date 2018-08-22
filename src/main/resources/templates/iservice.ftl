@@ -1,4 +1,4 @@
-package com.qiuxs.bottle.biz.service;
+package ${packageName}.service;
 
 import ${packageName}.dao.${className}Dao;
 import ${packageName}.entity.${className};

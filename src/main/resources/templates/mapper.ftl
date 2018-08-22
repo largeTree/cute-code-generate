@@ -38,7 +38,7 @@
 	</sql>
 
 	<select id="getByIds" resultType="${packageName}.entity.${className}" >
-		select <include refid="allFields" /> from user where id in
+		select <include refid="allFields" /> from ${tableName} where id in
 		<foreach collection="list" item="item" open="(" separator="," close=")" >
 			${r'#{item}'}
 		</foreach>
