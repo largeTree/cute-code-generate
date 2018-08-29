@@ -17,6 +17,8 @@ import ${superClass};
 
 public class ${className} extends ${simpleSuperClass}<${pkClass}> {
 
+	private static final long serialVersionUID = 1L;
+	
 	<#list fields as field>
 	<#if !field.ignoreEntity>
 	/** ${field.comment!} */
