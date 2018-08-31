@@ -74,7 +74,11 @@
 	</insert>
 
 	<update id="update" parameterType="${packageName}.entity.${className}" >
-		update ${tableName} set <include refid="setComn" /> where id = ${r'#{id}'}
+		update ${tableName} 
+			<set>
+				<include refid="setComn" />
+			</set>
+		where id = ${r'#{id}'}
 	</update>
 
 	<sql id="setComn" >
