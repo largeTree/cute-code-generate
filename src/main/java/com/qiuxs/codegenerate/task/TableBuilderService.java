@@ -83,7 +83,7 @@ public class TableBuilderService extends Service<Boolean> {
 					Writer mapperOut = null;
 					Writer serviceOut = null;
 					Writer iServiceOut = null;
-					Writer controllerOut = null;
+					Writer actionOut = null;
 					try {
 						if (tm.isEntity()) {
 							entityOut = builderWriter(outPutPath, tm, "", "entity", "", "java");
@@ -104,8 +104,8 @@ public class TableBuilderService extends Service<Boolean> {
 							TableBuilderService.this.outPut("iservice", iServiceOut, tm);
 						}
 						if (tm.isController()) {
-							controllerOut = builderWriter(outPutPath, tm, "", "controller", "", "java");
-							TableBuilderService.this.outPut("controller", controllerOut, tm);
+							actionOut = builderWriter(outPutPath, tm, "", "action", "", "java");
+							TableBuilderService.this.outPut("action", actionOut, tm);
 						}
 					} catch (IOException | TemplateException e) {
 						log.error("build error ext=" + e.getLocalizedMessage(), e);
@@ -115,7 +115,7 @@ public class TableBuilderService extends Service<Boolean> {
 						close(mapperOut);
 						close(serviceOut);
 						close(iServiceOut);
-						close(controllerOut);
+						close(actionOut);
 					}
 				});
 				return true;
