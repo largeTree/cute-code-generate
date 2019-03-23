@@ -41,6 +41,8 @@ public class TableBuilderService extends Service<Boolean> {
 		IGNORE_ENTITY_FIELDS.add("createdTime");
 		IGNORE_ENTITY_FIELDS.add("updatedBy");
 		IGNORE_ENTITY_FIELDS.add("updatedTime");
+		IGNORE_ENTITY_FIELDS.add("deletedBy");
+		IGNORE_ENTITY_FIELDS.add("deletedTime");
 	}
 
 	private Connection conn;
@@ -103,7 +105,7 @@ public class TableBuilderService extends Service<Boolean> {
 							iServiceOut = builderWriter(outPutPath, tm, "", "service", "I", "java");
 							TableBuilderService.this.outPut("iservice", iServiceOut, tm);
 						}
-						if (tm.isController()) {
+						if (tm.isAction()) {
 							actionOut = builderWriter(outPutPath, tm, "", "action", "", "java");
 							TableBuilderService.this.outPut("action", actionOut, tm);
 						}

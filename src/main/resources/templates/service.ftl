@@ -48,12 +48,16 @@ public class ${className}Service extends AbstractDataPropertyService<${pkClass},
 
 	@Override
 	protected void initProps(List<PropertyWrapper<?>> props) {
+		super.initProps(props);
+		
 		PropertyWrapper<?> prop = null;
 
 		<#list fields as field>
+		<#if !field.ignoreEntity>
+		
 		prop = new PropertyWrapper<${field.javaType}>(new BaseField("${field.name}", "${field.comment!field.name}", ${field.javaType}.class), null);
 		props.add(prop);
-
+		</#if>
 		</#list>
 	}
 

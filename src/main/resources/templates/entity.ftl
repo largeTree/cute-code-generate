@@ -11,6 +11,8 @@ import ${superClass};
 /**
  * ${desc!}实体类
  *	for table ${tableName}
+ * 
+ * 创建时间 ：${.now?string("yyyy-MM-dd HH:mm:ss")}
  * @author ${author!}
  *
  */

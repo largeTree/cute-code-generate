@@ -12,9 +12,10 @@ import ${packageName}.service.I${className}Service;
 
 /**
  * ${desc!}Action
- * 
- * @author ${author}
  *
+ * 创建时间 ：${.now?string("yyyy-MM-dd HH:mm:ss")}
+ * @author ${author}
+ * 
  */
  @Service
 public class ${className}Action extends BaseAction<${pkClass}, ${className}, ${className}Dao, I${className}Service> {

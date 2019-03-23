@@ -22,7 +22,7 @@ public class TableModel {
 	private boolean dao = true;
 	private boolean mapper = true;
 	private boolean service = true;
-	private boolean controller = true;
+	private boolean action = true;
 
 	private boolean hasError = false;
 	private Set<String> unkonwTypes = new HashSet<>();
@@ -137,12 +137,12 @@ public class TableModel {
 		this.service = service;
 	}
 
-	public boolean isController() {
-		return controller;
+	public boolean isAction() {
+		return action;
 	}
 
-	public void setController(boolean controller) {
-		this.controller = controller;
+	public void setAction(boolean action) {
+		this.action = action;
 	}
 
 	public List<FieldModel> getFields() {

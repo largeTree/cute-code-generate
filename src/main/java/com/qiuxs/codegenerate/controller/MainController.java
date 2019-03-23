@@ -90,7 +90,7 @@ public class MainController implements Initializable {
 	@FXML
 	private CheckBox serviceCkBox;
 	@FXML
-	private CheckBox controllerCkBox;
+	private CheckBox actionCkBox;
 
 	private TableModel currentTableModel;
 
@@ -165,7 +165,7 @@ public class MainController implements Initializable {
 		this.tableControls.add(this.daoCkBox);
 		this.tableControls.add(this.mapperCkBox);
 		this.tableControls.add(this.serviceCkBox);
-		this.tableControls.add(this.controllerCkBox);
+		this.tableControls.add(this.actionCkBox);
 
 		// 默认所有控件禁用，选择表并勾选build后启用
 		this.setDisableFlag(true);
@@ -357,7 +357,7 @@ public class MainController implements Initializable {
 		this.daoCkBox.setSelected(this.currentTableModel.isDao());
 		this.mapperCkBox.setSelected(this.currentTableModel.isMapper());
 		this.serviceCkBox.setSelected(this.currentTableModel.isService());
-		this.controllerCkBox.setSelected(this.currentTableModel.isController());
+		this.actionCkBox.setSelected(this.currentTableModel.isAction());
 	}
 
 	private void refreshTableModel() {
@@ -374,7 +374,7 @@ public class MainController implements Initializable {
 		this.currentTableModel.setDao(this.daoCkBox.isSelected());
 		this.currentTableModel.setMapper(this.mapperCkBox.isSelected());
 		this.currentTableModel.setService(this.serviceCkBox.isSelected());
-		this.currentTableModel.setController(this.controllerCkBox.isSelected());
+		this.currentTableModel.setAction(this.actionCkBox.isSelected());
 	}
 
 	private void setDisableFlag(boolean flag) {

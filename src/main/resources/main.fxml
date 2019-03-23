@@ -59,7 +59,7 @@
             <CheckBox fx:id="daoCkBox" layoutX="206.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Dao" />
             <CheckBox fx:id="mapperCkBox" layoutX="284.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Mapper" />
             <CheckBox fx:id="serviceCkBox" layoutX="377.0" layoutY="302.0" mnemonicParsing="false" selected="false" text="Service" />
-            <CheckBox fx:id="controllerCkBox" layoutX="119.0" layoutY="345.0" mnemonicParsing="false" selected="false" text="Cntroller" />
+            <CheckBox fx:id="actionCkBox" layoutX="119.0" layoutY="345.0" mnemonicParsing="false" selected="false" text="Action" />
           </children>
         </AnchorPane>
       </content>

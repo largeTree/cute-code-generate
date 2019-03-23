@@ -7,7 +7,8 @@ import ${packageName}.entity.${className};
 
 /**
  * ${desc!}Dao接口
- *
+ * 
+ * 创建时间 ：${.now?string("yyyy-MM-dd HH:mm:ss")}
  * @author ${author}
  *
  */
