@@ -28,6 +28,15 @@
 			</if>
 		</if>
 	</select>
+	
+	<select id="getCount" resultType="Long" >
+		select 
+			count(1) 
+		from `${tableName}`
+		<where>
+			<include refid="comnWhere" />
+		</where>
+	</select>
 
 	<sql id="comnWhere">
 		<#list fields as field>
