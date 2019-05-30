@@ -51,7 +51,6 @@ public class ${className}Service extends AbstractDataPropertyService<${pkClass},
 		super.initProps(props);
 		
 		PropertyWrapper<?> prop = null;
-
 		<#list fields as field>
 		<#if !field.ignoreEntity>
 		
